@@ -71,12 +71,44 @@ struct ContentView: View {
             .padding(.top)
             
             List {
-                ForEach(0 ..< items.count, id: \.self) { index in
+                // 設定済みアラームList表示
+//                ForEach(0 ..< items.count, id: \.self) { index in
+                ForEach(items) {item in
+                    Button(action: {
+                        self.isModalSubview.toggle()
+                        
+                        viewTagColor = .clear
+                        
+                    }) {
+                        AlarmRow(AlarmTime: item.alarmTime!, DayOfWeekRepeat: item.dayOfWeekRepeat , Label: item.label!, OnOff: Binding<Bool>(
+                            
+                            get: { item.onOff },
+                            set: {
+                                item.onOff = $0
+                                try? self.viewContext.save()
+                            }), Snooze: item.snooze, Sound: item.sound ?? "", TagColor: item.tagColor!)
+                    }
+                    .sheet(isPresented: $isModalSubview) {
+                        if(items.count > 0) {
+                            SettingView(
+                                        NewSettingBool: false
+                                        ,offsets: items.count
+                                        ,setAlarmTime: item.alarmTime!
+                                        ,setDayOfWeekRepeat: item.dayOfWeekRepeat
+                                        ,setLabel: item.label!
+                                        ,setSnooze: item.snooze
+                                        ,setSound: item.sound ?? ""
+                                        ,setTagColor: item.tagColor!
+                                        ,objectID: item.objectID
+                            )
+                        }
+                    } // sheetここまで
 //                    NavigationLink {
 //                        Text("AlarmData at \(item.alarmTime!)")
-                        AlarmRow(offsets: index)
+                    
+                    
 //                    } label: {
-//                        Text(items[index].alarmTime!, formatter: itemFormatter)
+//                        Text(item.alarmTime!, formatter: itemFormatter)
 //                    }
                 }
                 .onDelete(perform: deleteAlarmData)
@@ -84,12 +116,13 @@ struct ContentView: View {
             .listStyle(PlainListStyle())  // listの表示スタイルを指定
             .edgesIgnoringSafeArea(.top)
             .toolbar {
+                // 「編集」ボタン
                 ToolbarItem(placement: .navigationBarLeading) {
                     MyEditButton() // オリジナルEditButtonに置き換え
                 }
+                // 「＋」ボタン
                 ToolbarItem {
                     Button(action: {
-//                        addAlarmData()
                         self.isModalSubview.toggle()
                         
                         viewTagColor = .clear
@@ -99,9 +132,10 @@ struct ContentView: View {
                     }
                     .sheet(isPresented: $isModalSubview) {
                          
-                        if(items.count > 0) {
+//                        if(items.count > 0) {
                             SettingView(
-                                        NewSettingBool: true, offsets: items.count
+                                        NewSettingBool: true
+                                        ,offsets: items.count
                                         ,setAlarmTime: Date()
                                         ,setDayOfWeekRepeat: []
                                         ,setLabel: "アラーム"
@@ -109,8 +143,8 @@ struct ContentView: View {
                                         ,setSound: ""
                                         ,setTagColor: "clear"
                             )
-                        }
-                    }
+//                        }
+                    } // sheetここまで
                         
                 }
             }

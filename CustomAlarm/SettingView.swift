@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct SettingView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -33,7 +34,8 @@ struct SettingView: View {
     @State var setSound : String?
     @State var setTagColor : DataAccess.TagColor.RawValue
     
-    
+    // itemsから任意のitemを見つけるためのid
+    var objectID: NSManagedObjectID?
     
     var body: some View {
 //        Text("Hello")
@@ -80,7 +82,16 @@ struct SettingView: View {
 //                            items[offsets].snooze = setSnooze
 //                            items[offsets].sound = setSound != nil ? setSound : "アラーム"
 //                            items[offsets].tagColor = setTagColor
-                            addAlarmData()
+                            if(NewSettingBool) {
+                                addAlarmData()
+                            } else {
+//                                items[searchIndex()].alarmTime = setAlarmTime
+//                                items[searchIndex()].dayOfWeekRepeat = setDayOfWeekRepeat
+//                                items[searchIndex()].label = setLabel
+//                                items[searchIndex()].snooze = setSnooze
+//                                items[searchIndex()].sound = setSound ?? ""
+//                                items[searchIndex()].tagColor = setTagColor
+                            }
 
                             // 更新したCoreData保存
                             do{
@@ -189,16 +200,13 @@ struct SettingView: View {
 
                 // 【未】 Listのボタンと同じ角の丸い横長ボタンを上のListと少し話した場所に表示させる
                 Button(action: {
-                    if(NewSettingBool) {
-                        
-                    } else {
-                    viewContext.delete(items[offsets])
-
-                    do{
-                        try viewContext.save()
-                    }catch{
-                        print(error)
-                    }
+                    if(NewSettingBool) {} else {
+                        viewContext.delete(items[offsets])
+                        do{
+                            try viewContext.save()
+                        }catch{
+                            print(error)
+                        }
                     }
 
                     didTapDismissButton()
@@ -281,6 +289,17 @@ struct SettingView: View {
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
+    }
+    
+    // 既存設定用indexサーチ関数
+    private func searchIndex() -> Int {
+        var returnIndex: Int = items.count
+        for index in 0 ..< items.count {
+            if(items[index] == objectID){
+                returnIndex = index
+            }
+        }
+        return returnIndex
     }
     
 } // struct ここまで
