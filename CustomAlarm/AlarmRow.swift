@@ -16,7 +16,9 @@ struct AlarmRow: View {
         animation: .default)
     private var items: FetchedResults<AlarmData>
     
+    // CoreData番号
     var offsets: Int
+    
     
     var body: some View {
         ZStack(alignment: .trailing) {
@@ -41,7 +43,7 @@ struct AlarmRow: View {
                                 .brightness(items[offsets].onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
                         }
                     }
-                    Text("アラームラベル")
+                    Text(items[offsets].label ?? "アラーム")
                         .font(.body)
                         .fontWeight(.light)
                         .brightness(items[offsets].onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
