@@ -17,9 +17,13 @@ struct ContentView: View {
     var items: FetchedResults<AlarmData>
 
     // 新規作成用のモーダル遷移起動変数
+    @State var isModalSubviewNew = false
+    // 既存設定用のモーダル遷移起動変数
     @State var isModalSubview = false
     // 識別色タグの分類表示用変数
     @State var viewTagColor: DataAccess.TagColor = .clear
+    // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
+    @State var index: Int = 0
 
     var body: some View {
         NavigationView{
@@ -79,6 +83,8 @@ struct ContentView: View {
                         
                         viewTagColor = .clear
                         
+                        index = searchIndex(objectID: item.objectID)
+                        
                     }) {
                         AlarmRow(AlarmTime: item.alarmTime!, DayOfWeekRepeat: item.dayOfWeekRepeat , Label: item.label!, OnOff: Binding<Bool>(
                             
@@ -89,17 +95,17 @@ struct ContentView: View {
                             }), Snooze: item.snooze, Sound: item.sound ?? "", TagColor: item.tagColor!)
                     }
                     .sheet(isPresented: $isModalSubview) {
-                        if(items.count > 0) {
+                        if(items.count > 0 && item.alarmTime != nil && item.alarmTime == items[index].alarmTime) {
                             SettingView(
                                         NewSettingBool: false
-                                        ,offsets: items.count
-                                        ,setAlarmTime: item.alarmTime!
-                                        ,setDayOfWeekRepeat: item.dayOfWeekRepeat
-                                        ,setLabel: item.label!
-                                        ,setSnooze: item.snooze
-                                        ,setSound: item.sound ?? ""
-                                        ,setTagColor: item.tagColor!
-                                        ,objectID: item.objectID
+                                        ,offsets: index
+                                        ,setAlarmTime: items[index].alarmTime!
+//                                        ,setDayOfWeekRepeat: items[index].dayOfWeekRepeat
+//                                        ,setLabel: items[index].label!
+//                                        ,setSnooze: items[index].snooze
+//                                        ,setSound: items[index].sound ?? ""
+//                                        ,setTagColor: items[index].tagColor!
+//                                        ,objectID: items[index].objectID
                             )
                         }
                     } // sheetここまで
@@ -123,29 +129,27 @@ struct ContentView: View {
                 // 「＋」ボタン
                 ToolbarItem {
                     Button(action: {
-                        self.isModalSubview.toggle()
-                        
+                        self.isModalSubviewNew.toggle()
+
                         viewTagColor = .clear
-                        
+
                     }) {
                         Label("Add AlarmData", systemImage: "plus")
                     }
-                    .sheet(isPresented: $isModalSubview) {
-                         
-//                        if(items.count > 0) {
+                    .sheet(isPresented: $isModalSubviewNew) {
+
                             SettingView(
                                         NewSettingBool: true
                                         ,offsets: items.count
                                         ,setAlarmTime: Date()
-                                        ,setDayOfWeekRepeat: []
-                                        ,setLabel: "アラーム"
-                                        ,setSnooze: false
-                                        ,setSound: ""
-                                        ,setTagColor: "clear"
+//                                        ,setDayOfWeekRepeat: []
+//                                        ,setLabel: "アラーム"
+//                                        ,setSnooze: false
+//                                        ,setSound: ""
+//                                        ,setTagColor: "clear"
                             )
-//                        }
+
                     } // sheetここまで
-                        
                 }
             }
         } // VStackここまで
@@ -192,6 +196,20 @@ struct ContentView: View {
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
+    }
+    
+    // 既存設定用indexサーチ関数
+    private func searchIndex(objectID: NSManagedObjectID) -> Int {
+        // itemsから任意のitemを見つけるためのid
+        var returnIndex: Int = 0
+        for index in 0 ..< items.count {
+            if(items[index].alarmTime != nil) {
+                if(items[index].objectID == objectID){
+                    returnIndex = index
+                }
+            }
+        }
+        return returnIndex
     }
     
 //    // CoreData更新のためのforループ(DayOfWeek用)
