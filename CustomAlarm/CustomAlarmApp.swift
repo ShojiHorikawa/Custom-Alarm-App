@@ -10,10 +10,11 @@ import SwiftUI
 @main
 struct CustomAlarmApp: App {
     let persistenceController = PersistenceController.shared
+    @State var index = ""
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(index: $index)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }

@@ -23,7 +23,7 @@ struct ContentView: View {
     // 識別色タグの分類表示用変数
     @State var viewTagColor: DataAccess.TagColor = .clear
     // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
-    @State var index: Int = 0
+    @Binding var index: String
 
     var body: some View {
         NavigationView{
@@ -83,7 +83,8 @@ struct ContentView: View {
                         
                         viewTagColor = .clear
                         
-                        index = searchIndex(objectID: item.objectID)
+//                        index = searchIndex(objectID: item.objectID)
+                        index = item.uuid!
                         
                     }) {
                         AlarmRow(AlarmTime: item.alarmTime!, DayOfWeekRepeat: item.dayOfWeekRepeat , Label: item.label!, OnOff: Binding<Bool>(
@@ -95,17 +96,18 @@ struct ContentView: View {
                             }), Snooze: item.snooze, Sound: item.sound ?? "", TagColor: item.tagColor!)
                     }
                     .sheet(isPresented: $isModalSubview) {
-                        if(items.count > 0 && item.alarmTime != nil && item.alarmTime == items[index].alarmTime) {
+                        if(items.count > 0 && item.alarmTime != nil && item.uuid == index) {
+                            
                             SettingView(
                                         NewSettingBool: false
-                                        ,offsets: index
-                                        ,setAlarmTime: items[index].alarmTime!
-//                                        ,setDayOfWeekRepeat: items[index].dayOfWeekRepeat
-//                                        ,setLabel: items[index].label!
-//                                        ,setSnooze: items[index].snooze
-//                                        ,setSound: items[index].sound ?? ""
-//                                        ,setTagColor: items[index].tagColor!
-//                                        ,objectID: items[index].objectID
+//                                        ,offsets: index
+                                        ,setUUID: item.uuid!
+                                        ,setAlarmTime: item.alarmTime!
+                                        ,setDayOfWeekRepeat: item.dayOfWeekRepeat
+                                        ,setLabel: item.label!
+                                        ,setSnooze: item.snooze
+                                        ,setSound: item.sound ?? ""
+                                        ,setTagColor: item.tagColor!
                             )
                         }
                     } // sheetここまで
@@ -140,13 +142,14 @@ struct ContentView: View {
 
                             SettingView(
                                         NewSettingBool: true
-                                        ,offsets: items.count
+//                                        ,offsets: items.count
+                                        ,setUUID: UUID().uuidString
                                         ,setAlarmTime: Date()
-//                                        ,setDayOfWeekRepeat: []
-//                                        ,setLabel: "アラーム"
-//                                        ,setSnooze: false
-//                                        ,setSound: ""
-//                                        ,setTagColor: "clear"
+                                        ,setDayOfWeekRepeat: []
+                                        ,setLabel: "アラーム"
+                                        ,setSnooze: false
+                                        ,setSound: ""
+                                        ,setTagColor: "clear"
                             )
 
                     } // sheetここまで
@@ -170,6 +173,7 @@ struct ContentView: View {
 //            newAlarmData.snooze = false
 //            newAlarmData.sound = ""
 //            newAlarmData.tagColor = "clear"
+//              newAlarmData.uniqueId = UUID().uuidString
 //
 //            do {
 //                try viewContext.save()
@@ -233,9 +237,12 @@ private let itemFormatter: DateFormatter = {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView(index:  Binding.constant("")).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
+
+
+
 
 // オリジナルEditButton
 struct MyEditButton: View {

@@ -23,7 +23,17 @@ extension AlarmData {
     @NSManaged public var snooze: Bool
     @NSManaged public var sound: String?
     @NSManaged public var tagColor: String?
+    @NSManaged public var uuid: String?
 
+}
+
+//毎回nilの場合の処理を考えるのが面倒なのでまとめて設定
+extension AlarmData {
+    public var wrappedAlarmTime: Date {alarmTime ?? Date()}
+    public var wrappedLabel: String {label ?? "アラーム"}
+    public var wrappedSound: String {sound ?? ""}
+    public var wrappedTagColor: String {tagColor ?? "clear"}
+    public var wrappedUuid: String {uuid ?? UUID().uuidString}
 }
 
 extension AlarmData : Identifiable {

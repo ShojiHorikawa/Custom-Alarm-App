@@ -8,8 +8,9 @@
         <attribute name="snooze" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="sound" optional="YES" attributeType="String"/>
         <attribute name="tagColor" optional="YES" attributeType="String"/>
+        <attribute name="uuid" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="AlarmData" positionX="-63" positionY="-18" width="128" height="134"/>
+        <element name="AlarmData" positionX="-63" positionY="-18" width="128" height="149"/>
     </elements>
 </model>

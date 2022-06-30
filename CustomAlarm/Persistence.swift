@@ -23,6 +23,7 @@ struct PersistenceController {
         newAlarmData.snooze = false
         newAlarmData.sound = ""
         newAlarmData.tagColor = "red"
+        newAlarmData.uuid = UUID().uuidString
         
 //        }
         do {
