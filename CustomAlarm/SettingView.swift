@@ -20,10 +20,10 @@ struct SettingView: View {
     @FetchRequest(entity: AlarmData.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \AlarmData.alarmTime, ascending: true)],
                   predicate: nil
     )private var items: FetchedResults<AlarmData>
-/*
-     モーダル表示を閉じるdismiss()を使うための変数
+
+//     モーダル表示を閉じるdismiss()を使うための変数
     @Environment(\.presentationMode) var presentationMode
-*/
+
     
     // 
     @ObservedObject var dataModel: DataModel
@@ -61,6 +61,7 @@ struct SettingView: View {
                         // キャンセルボタンを押したらアラーム設定のデータを更新しない
                         Button("キャンセル") {
                             dataModel.isNewData = false
+                            didTapDismissButton()
 //                            // 新規作成の場合、追加した設定を配列から削除
 //                            if(NewSettingBool){
 ////                                viewContext.delete(items[offsets])
@@ -128,6 +129,7 @@ struct SettingView: View {
                             
                             
                             dataModel.writeData(context: viewContext)
+                            didTapDismissButton()
                         }
                         // アラーム専用の橙色に設定
                         .foregroundColor(Color("DarkOrange"))
@@ -233,14 +235,15 @@ struct SettingView: View {
 */
                     
                     dataModel.isNewData = false
+                    
+                    didTapDismissButton()
                     // 既存設定の変更かどうかを判断
                     if(dataModel.updateItem != nil) {
                         viewContext.delete(items[searchIndex()])
                         try! viewContext.save()
                     }
-/*
-                    didTapDismissButton()
- */
+
+ 
                     // .actionSheetを使って確認メッセージを表示する
                     // https://www.choge-blog.com/programming/swiftuiactionsheetshow/
 
@@ -261,10 +264,10 @@ struct SettingView: View {
 
     } // body ここまで
 
-//    // モーダル遷移を閉じるための関数
-//    private func didTapDismissButton() {
-//        presentationMode.wrappedValue.dismiss()
-//    }
+    // モーダル遷移を閉じるための関数
+    private func didTapDismissButton() {
+        presentationMode.wrappedValue.dismiss()
+    }
 
     // 設定済み繰り返し曜日を示す文字列作成関数
     func textWeekDay() -> String {

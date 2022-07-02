@@ -18,12 +18,15 @@ struct ContentView: View {
         animation: .default)
     private var items: FetchedResults<AlarmData>
     
-/*
+
      // 新規作成用のモーダル遷移起動変数
      @State var isModalSubviewNew = false
      // 既存設定用のモーダル遷移起動変数
      @State var isModalSubview = false
-*/
+    
+    // オリジナル編集・完了ボタン用変数
+    @Environment(\.editMode) var editMode
+
      // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
      @Binding var index: String
     // 識別色タグの分類表示用変数
@@ -84,10 +87,10 @@ struct ContentView: View {
                     ForEach(items) {item in
                         /* 1 */
                         Button(action: {
-                            /*
-                             self.isModalSubview.toggle()
-                             */
+                            
+                             
                             dataModel.editItem(item: item)
+                            self.isModalSubview.toggle()
                             
                             viewTagColor = .clear
                             
@@ -109,7 +112,7 @@ struct ContentView: View {
                         /*
                          .sheet(isPresented: $isModalSubview) {
                          */
-                        .sheet(isPresented: $dataModel.isNewData) {
+                        .sheet(isPresented: $isModalSubview) {
                             if(items.count > 0 && item.alarmTime != nil && item.wrappedUuid == index) {
                                 /* 2
                                  SettingView(
@@ -143,7 +146,22 @@ struct ContentView: View {
                 .toolbar {
                     // 「編集」ボタン
                     ToolbarItem(placement: .navigationBarLeading) {
-                        MyEditButton() // オリジナルEditButtonに置き換え
+                        // オリジナルEditButtonに置き換え
+                        Button(action: {
+                            withAnimation() {
+                                if editMode?.wrappedValue.isEditing == true {
+                                    editMode?.wrappedValue = .inactive
+                                } else {
+                                    editMode?.wrappedValue = .active
+                                }
+                            }
+                        }) {
+                                if editMode?.wrappedValue.isEditing == true {
+                                    Text("完了")
+                                } else {
+                                    Text("編集")
+                                }
+                        }
                     }
                     // 「＋」ボタン
                     ToolbarItem {
@@ -151,7 +169,14 @@ struct ContentView: View {
                             /*
                              self.isModalSubviewNew.toggle()
                              */
+                            
+                            // 「完了」ボタンが表示されている場合、「編集」ボタンへ戻す
+                            if editMode?.wrappedValue.isEditing == true {
+                                editMode?.wrappedValue = .inactive
+                            }
+                            
                             dataModel.isNewData.toggle()
+                            self.isModalSubviewNew.toggle()
                             viewTagColor = .clear
                             
                         }) {
@@ -161,23 +186,10 @@ struct ContentView: View {
                          .sheet(isPresented: $isModalSubviewNew) {
                          */
                         
-                        .sheet(isPresented: $dataModel.isNewData) {
-                            /*
-                             SettingView(
-                             NewSettingBool: true
-                             //                                        ,offsets: items.count
-                             ,setUUID: UUID().uuidString
-                             ,setAlarmTime: Date()
-                             ,setDayOfWeekRepeat: []
-                             ,setLabel: "アラーム"
-                             ,setSnooze: false
-                             ,setSound: ""
-                             ,setTagColor: "clear"
-                             )
-                             */
+                        .sheet(isPresented: $isModalSubviewNew) {
                             SettingView(dataModel: dataModel)
                         } // sheetここまで
-                    }
+                    } // ToolbarItemここまで
                 }
             } // VStackここまで
             //            Text("Select an item")
@@ -250,7 +262,13 @@ struct ContentView: View {
     //        }
     //        return weekValue
     //    }
-}
+//    // アラーム設定画面へ移行した時、もし「完了」ボタンが表示されていたら「編集」ボタンへ戻す
+//    func changeEditMode() {
+//        if editMode?.wrappedValue.isEditing == false{
+//            editMode?.wrappedValue = .active
+//        }
+//    }
+} // structここまで
 
 private let itemFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -270,10 +288,11 @@ struct ContentView_Previews: PreviewProvider {
 
 
 
-
+/*
 // オリジナルEditButton
 struct MyEditButton: View {
     @Environment(\.editMode) var editMode
+    
     
     var body: some View {
         Button(action: {
@@ -285,11 +304,19 @@ struct MyEditButton: View {
                 }
             }
         }) {
-            if editMode?.wrappedValue.isEditing == true {
-                Text("完了")
-            } else {
-                Text("編集")
-            }
+                if editMode?.wrappedValue.isEditing == true {
+                    Text("完了")
+                } else {
+                    Text("編集")
+                }
+        }
+    }
+    
+    // アラーム設定画面へ移行した時、もし「完了」ボタンが表示されていたら「編集」ボタンへ戻す
+    func changeEditMode() {
+        if editMode?.wrappedValue.isEditing == false{
+            editMode?.wrappedValue = .active
         }
     }
 }
+*/
