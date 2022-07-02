@@ -12,10 +12,6 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) var viewContext
     @StateObject private var dataModel = DataModel()
     
-    //    @FetchRequest(
-    //        sortDescriptors: [NSSortDescriptor(keyPath: \AlarmData.alarmTime, ascending: true)],
-    //        animation: .default)
-    //    var items: FetchedResults<AlarmData>
     @FetchRequest(
         //データの取得方法を指定　下記は日付降順
         entity:AlarmData.entity(),sortDescriptors: [NSSortDescriptor(keyPath: \AlarmData.alarmTime, ascending: true)],

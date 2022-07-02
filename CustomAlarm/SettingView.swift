@@ -232,12 +232,12 @@ struct SettingView: View {
                     }
 */
                     
+                    dataModel.isNewData = false
                     // 既存設定の変更かどうかを判断
                     if(dataModel.updateItem != nil) {
                         viewContext.delete(items[searchIndex()])
                         try! viewContext.save()
                     }
-                    dataModel.isNewData = false
 /*
                     didTapDismissButton()
  */
