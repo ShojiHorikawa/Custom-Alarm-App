@@ -4,6 +4,7 @@
 //
 //  Created by パソコンさん on 2022/06/27.
 //
+// dayOfWeekとtagColor用の列挙体
 
 import Foundation
 struct DataAccess {

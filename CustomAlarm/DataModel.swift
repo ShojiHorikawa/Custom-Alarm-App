@@ -113,3 +113,4 @@ class DataModel : ObservableObject{
         isNewData.toggle()
     }
 }
+

@@ -9,20 +9,27 @@ import SwiftUI
 import CoreData
 
 struct SettingView: View {
+    // AlarmData管理用のcontext
     @Environment(\.managedObjectContext) private var viewContext
     
 //    @FetchRequest(
 //        sortDescriptors: [NSSortDescriptor(keyPath: \AlarmData.alarmTime, ascending: true)],
 //        animation: .default)
 //    private var items: FetchedResults<AlarmData>
-    
+
     @FetchRequest(entity: AlarmData.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \AlarmData.alarmTime, ascending: true)],
                   predicate: nil
     )private var items: FetchedResults<AlarmData>
-    
-    // モーダル表示を閉じるdismiss()を使うための変数
+/*
+     モーダル表示を閉じるdismiss()を使うための変数
     @Environment(\.presentationMode) var presentationMode
+*/
     
+    // 
+    @ObservedObject var dataModel: DataModel
+//    @ObservedObject var Items: AlarmData
+    
+/*
     // 新規作成か否かを示すBool引数(新規作成:true,既存設定:false)
     var NewSettingBool:Bool
     
@@ -42,7 +49,7 @@ struct SettingView: View {
     
     // itemsから任意のitemを見つけるためのid
     var objectID: NSManagedObjectID?
-    
+*/
     var body: some View {
 //        Text("Hello")
         // 【解決】モーダル遷移のページ上部に謎の余白発生（NavigationLinkとList追加後に発生)
@@ -53,17 +60,18 @@ struct SettingView: View {
                     HStack{
                         // キャンセルボタンを押したらアラーム設定のデータを更新しない
                         Button("キャンセル") {
-                            // 新規作成の場合、追加した設定を配列から削除
-                            if(NewSettingBool){
-//                                viewContext.delete(items[offsets])
-
-                                do{
-                                    try viewContext.save()
-                                }catch{
-                                    print(error)
-                                }
-                            }
-                            didTapDismissButton()
+                            dataModel.isNewData = false
+//                            // 新規作成の場合、追加した設定を配列から削除
+//                            if(NewSettingBool){
+////                                viewContext.delete(items[offsets])
+//
+//                                do{
+//                                    try viewContext.save()
+//                                }catch{
+//                                    print(error)
+//                                }
+//                            }
+//                            didTapDismissButton()
                         }
                         // アラーム専用の橙色に設定
                         .foregroundColor(Color("DarkOrange"))
@@ -88,31 +96,38 @@ struct SettingView: View {
 //                            items[offsets].snooze = setSnooze
 //                            items[offsets].sound = setSound != nil ? setSound : "アラーム"
 //                            items[offsets].tagColor = setTagColor
-                            if(NewSettingBool) {
-                                addAlarmData()
-                            } else {
-                                items[searchIndex()].alarmTime = setAlarmTime
-                                items[searchIndex()].dayOfWeekRepeat = setDayOfWeekRepeat
-                                items[searchIndex()].label = setLabel
-                                items[searchIndex()].snooze = setSnooze
-                                items[searchIndex()].sound = setSound ?? ""
-                                items[searchIndex()].tagColor = setTagColor
-                            }
-
-                            // 更新したCoreData保存
-                            do{
-                                try viewContext.save()
-                            }catch{
-                                print(error)
-                            }
-
+                            
+//                            if(NewSettingBool) {
+//                                addAlarmData()
+//                            } else {
+//                                items[searchIndex()].alarmTime = setAlarmTime
+//                                items[searchIndex()].dayOfWeekRepeat = setDayOfWeekRepeat
+//                                items[searchIndex()].label = setLabel
+//                                items[searchIndex()].snooze = setSnooze
+//                                items[searchIndex()].sound = setSound ?? ""
+//                                items[searchIndex()].tagColor = setTagColor
+//                            }
+//
+//                            // 更新したCoreData保存
+//                            do{
+//                                try viewContext.save()
+//                            }catch{
+//                                print(error)
+//                            }
+                            
+                            
+/*
                             didTapDismissButton()
-
+*/
 //                            if(items[offsets].onOff) {
 //                                // アラームセット　無限ループの制限
 //                                //                                let spanTime = AlarmDate.alarmTime.timeIntervalSince(Date())
 //                                //                                AlarmArray[alarmId].startCountUp(willTime: AlarmDate.alarmTime, url: URL(string: AlarmDate.sound),moreDay: spanTime <= 0 )
 //                            }
+                            
+                            
+                            
+                            dataModel.writeData(context: viewContext)
                         }
                         // アラーム専用の橙色に設定
                         .foregroundColor(Color("DarkOrange"))
@@ -129,7 +144,7 @@ struct SettingView: View {
 
                 // 時間設定（ホイール）
                 DatePicker("",
-                           selection: $setAlarmTime,
+                           selection: $dataModel.alarmTime,
                            displayedComponents: .hourAndMinute
                 )
                 .datePickerStyle(.wheel)
@@ -178,7 +193,7 @@ struct SettingView: View {
                         // スヌーズのON/OFF切り替え
                         Text("スヌーズ")
                             .foregroundColor(Color.white)
-                        Toggle(isOn: $setSnooze) {
+                        Toggle(isOn: $dataModel.snooze) {
 
                         }
                     }
@@ -206,6 +221,7 @@ struct SettingView: View {
 
                 // 【未】 Listのボタンと同じ角の丸い横長ボタンを上のListと少し話した場所に表示させる
                 Button(action: {
+/*
                     if(NewSettingBool) {} else {
                         viewContext.delete(items[searchIndex()])
                         do{
@@ -214,8 +230,17 @@ struct SettingView: View {
                             print(error)
                         }
                     }
-
+*/
+                    
+                    // 既存設定の変更かどうかを判断
+                    if(dataModel.updateItem != nil) {
+                        viewContext.delete(items[searchIndex()])
+                        try! viewContext.save()
+                    }
+                    dataModel.isNewData = false
+/*
                     didTapDismissButton()
+ */
                     // .actionSheetを使って確認メッセージを表示する
                     // https://www.choge-blog.com/programming/swiftuiactionsheetshow/
 
@@ -236,10 +261,10 @@ struct SettingView: View {
 
     } // body ここまで
 
-    // モーダル遷移を閉じるための関数
-    private func didTapDismissButton() {
-        presentationMode.wrappedValue.dismiss()
-    }
+//    // モーダル遷移を閉じるための関数
+//    private func didTapDismissButton() {
+//        presentationMode.wrappedValue.dismiss()
+//    }
 
     // 設定済み繰り返し曜日を示す文字列作成関数
     func textWeekDay() -> String {
@@ -248,8 +273,8 @@ struct SettingView: View {
 
         for index in 0 ..< weekArray.count {
             let stringDay = weekArray[index].rawValue
-            if(setDayOfWeekRepeat.contains(weekArray[index].rawValue)) {
-                if(setDayOfWeekRepeat.count == 1) {
+            if(dataModel.dayOfWeekRepeat.contains(weekArray[index].rawValue)) {
+                if(dataModel.dayOfWeekRepeat.count == 1) {
                     returnString = weekArray[index].rawValue
                 } else {
                     if(returnString == "しない") {
@@ -267,13 +292,14 @@ struct SettingView: View {
     // 設定済み識別色を示す文字列作成関数
     func textTagColor() -> String{
         var returnString = " "
-        if(setTagColor != "clear") {
-            returnString = setTagColor
+        if(dataModel.tagColor != "clear") {
+            returnString = dataModel.tagColor
         }
 
         return returnString
     }
 
+    /*
     // データ追加
     private func addAlarmData() {
         withAnimation {
@@ -297,23 +323,24 @@ struct SettingView: View {
             }
         }
     }
+*/
 
     // 既存設定用indexサーチ関数 (uuid検索)
     private func searchIndex() -> Int {
         var returnIndex: Int = items.count
         for index in 0 ..< items.count {
-            if(items[index].uuid == setUUID){
+            if(items[index].uuid == dataModel.uuid){
                 returnIndex = index
             }
         }
         return returnIndex
     }
-    
+
 } // struct ここまで
 
-struct SettingView_Previews: PreviewProvider {
-
-    static var previews: some View {
-        SettingView(NewSettingBool: false, setUUID: UUID().uuidString, setAlarmTime: Date(), setDayOfWeekRepeat: [], setLabel: "アラーム", setSnooze: false, setTagColor: "clear")
-    }
-}
+//struct SettingView_Previews: PreviewProvider {
+//
+//    static var previews: some View {
+//        SettingView(NewSettingBool: false, setUUID: UUID().uuidString, setAlarmTime: Date(), setDayOfWeekRepeat: [], setLabel: "アラーム", setSnooze: false, setTagColor: "clear")
+//    }
+//}
