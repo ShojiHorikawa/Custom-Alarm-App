@@ -11,45 +11,17 @@ import CoreData
 struct SettingView: View {
     // AlarmData管理用のcontext
     @Environment(\.managedObjectContext) private var viewContext
-    
-//    @FetchRequest(
-//        sortDescriptors: [NSSortDescriptor(keyPath: \AlarmData.alarmTime, ascending: true)],
-//        animation: .default)
-//    private var items: FetchedResults<AlarmData>
 
     @FetchRequest(entity: AlarmData.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \AlarmData.alarmTime, ascending: true)],
                   predicate: nil
     )private var items: FetchedResults<AlarmData>
 
-//     モーダル表示を閉じるdismiss()を使うための変数
+     //モーダル表示を閉じるdismiss()を使うための変数
     @Environment(\.presentationMode) var presentationMode
 
-    
     // 
     @ObservedObject var dataModel: DataModel
-//    @ObservedObject var Items: AlarmData
     
-/*
-    // 新規作成か否かを示すBool引数(新規作成:true,既存設定:false)
-    var NewSettingBool:Bool
-    
-    // CoreData番号
-//    var offsets: Int
-    // 既存設定のデータ検索用UUID(String) 新規作成の場合は適当
-    let setUUID: String
-    
-//    @State var setOnOff : Bool
-    
-    @State var setAlarmTime : Date
-    @State var setDayOfWeekRepeat : [DataAccess.DayOfWeek.RawValue]
-    @State var setLabel : String
-    @State var setSnooze : Bool
-    @State var setSound : String?
-    @State var setTagColor : DataAccess.TagColor.RawValue
-    
-    // itemsから任意のitemを見つけるためのid
-    var objectID: NSManagedObjectID?
-*/
     var body: some View {
 //        Text("Hello")
         // 【解決】モーダル遷移のページ上部に謎の余白発生（NavigationLinkとList追加後に発生)
@@ -62,17 +34,6 @@ struct SettingView: View {
                         Button("キャンセル") {
                             dataModel.isNewData = false
                             didTapDismissButton()
-//                            // 新規作成の場合、追加した設定を配列から削除
-//                            if(NewSettingBool){
-////                                viewContext.delete(items[offsets])
-//
-//                                do{
-//                                    try viewContext.save()
-//                                }catch{
-//                                    print(error)
-//                                }
-//                            }
-//                            didTapDismissButton()
                         }
                         // アラーム専用の橙色に設定
                         .foregroundColor(Color("DarkOrange"))
@@ -82,52 +43,11 @@ struct SettingView: View {
 
                         // 【未】完了ボタンを押したらアラーム設定のデータを変更する
                         Button("保存") {
-//                            // CoreData更新のためのforループ(DayOfWeek用)
-//                            var weekValue: [String] = []
-//                            for index in 0 ..< weekArray.count {
-//                                if(setDayOfWeekRepeat.contains(weekArray[index].rawValue)) {
-//                                    weekValue.append(weekArray[index].rawValue)
-//                                }
-//                            }
-
-                            // CoreData更新
-//                            items[offsets].alarmTime = setAlarmTime
-//                            items[offsets].dayOfWeekRepeat = weekValue
-//                            items[offsets].label = setLabel
-//                            items[offsets].snooze = setSnooze
-//                            items[offsets].sound = setSound != nil ? setSound : "アラーム"
-//                            items[offsets].tagColor = setTagColor
-                            
-//                            if(NewSettingBool) {
-//                                addAlarmData()
-//                            } else {
-//                                items[searchIndex()].alarmTime = setAlarmTime
-//                                items[searchIndex()].dayOfWeekRepeat = setDayOfWeekRepeat
-//                                items[searchIndex()].label = setLabel
-//                                items[searchIndex()].snooze = setSnooze
-//                                items[searchIndex()].sound = setSound ?? ""
-//                                items[searchIndex()].tagColor = setTagColor
-//                            }
-//
-//                            // 更新したCoreData保存
-//                            do{
-//                                try viewContext.save()
-//                            }catch{
-//                                print(error)
-//                            }
-                            
-                            
-/*
-                            didTapDismissButton()
-*/
-//                            if(items[offsets].onOff) {
-//                                // アラームセット　無限ループの制限
-//                                //                                let spanTime = AlarmDate.alarmTime.timeIntervalSince(Date())
-//                                //                                AlarmArray[alarmId].startCountUp(willTime: AlarmDate.alarmTime, url: URL(string: AlarmDate.sound),moreDay: spanTime <= 0 )
-//                            }
-                            
-                            
-                            
+                            if(searchIndex() >= 0) {
+                                viewContext.delete(items[searchIndex()])
+                            }
+                            dataModel.updateItem = AlarmData(context: viewContext)
+//                            dataModel.rewrite(dataModel: dataModel,context: viewContext)
                             dataModel.writeData(context: viewContext)
                             didTapDismissButton()
                         }
@@ -223,16 +143,6 @@ struct SettingView: View {
 
                 // 【未】 Listのボタンと同じ角の丸い横長ボタンを上のListと少し話した場所に表示させる
                 Button(action: {
-/*
-                    if(NewSettingBool) {} else {
-                        viewContext.delete(items[searchIndex()])
-                        do{
-                            try viewContext.save()
-                        }catch{
-                            print(error)
-                        }
-                    }
-*/
                     
                     dataModel.isNewData = false
                     
@@ -302,41 +212,20 @@ struct SettingView: View {
         return returnString
     }
 
-    /*
-    // データ追加
-    private func addAlarmData() {
-        withAnimation {
-            let newAlarmData = AlarmData(context: viewContext)
-            newAlarmData.alarmTime = setAlarmTime
-            newAlarmData.dayOfWeekRepeat = setDayOfWeekRepeat
-            newAlarmData.label = setLabel
-            newAlarmData.onOff = true
-            newAlarmData.snooze = setSnooze
-            newAlarmData.sound = setSound ?? ""
-            newAlarmData.tagColor = setTagColor
-            newAlarmData.uuid = setUUID
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-*/
 
     // 既存設定用indexサーチ関数 (uuid検索)
     private func searchIndex() -> Int {
-        var returnIndex: Int = items.count
+        var returnIndex: Int?
         for index in 0 ..< items.count {
             if(items[index].uuid == dataModel.uuid){
                 returnIndex = index
             }
         }
-        return returnIndex
+        if(returnIndex == nil) {
+            return -1
+        } else {
+            return returnIndex!
+        }
     }
 
 } // struct ここまで

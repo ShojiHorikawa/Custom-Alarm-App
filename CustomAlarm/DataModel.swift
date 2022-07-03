@@ -112,5 +112,32 @@ class DataModel : ObservableObject{
 
         isNewData.toggle()
     }
+/*
+    func rewrite(dataModel: DataModel,context :NSManagedObjectContext) {
+        let updateItem = AlarmData(context: context)
+        updateItem.alarmTime = dataModel.alarmTime
+        updateItem.dayOfWeekRepeat = dataModel.dayOfWeekRepeat
+        updateItem.label = dataModel.label
+        updateItem.onOff = dataModel.onOff
+        updateItem.snooze = dataModel.snooze
+        updateItem.sound = dataModel.sound
+        updateItem.tagColor = dataModel.tagColor
+        updateItem.uuid = dataModel.uuid
+        
+        try! context.save()
+        
+//        updateItem = nil
+//        isNewData.toggle()
+//        
+//        alarmTime = Date()
+//        dayOfWeekRepeat = []
+//        label = "アラーム"
+//        onOff = true
+//        snooze = false
+//        sound = ""
+//        tagColor = "clear"
+//        uuid = UUID().uuidString
+    }
+*/
 }
 
