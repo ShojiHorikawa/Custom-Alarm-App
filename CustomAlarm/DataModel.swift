@@ -17,7 +17,9 @@ import CoreData
  newAlarmData.label = "アラーム"
  newAlarmData.onOff = true
  newAlarmData.snooze = false
+ newAlarmData.soundOnOff = false
  newAlarmData.sound = ""
+ newAlarmData.soundName = ""
  newAlarmData.tagColor = "red"
  newAlarmData.uuid = UUID().uuidString
  
@@ -28,7 +30,9 @@ class DataModel : ObservableObject{
     @Published var label = "アラーム"
     @Published var onOff = true
     @Published var snooze = false
-    @Published var sound = ""
+    @Published var soundOnOff = false
+    @Published var soundURL = ""
+    @Published var soundName = ""
     @Published var tagColor: String = "clear"
     @Published var uuid = UUID().uuidString
 
@@ -43,8 +47,10 @@ class DataModel : ObservableObject{
             updateItem.dayOfWeekRepeat = dayOfWeekRepeat
             updateItem.label = label
             updateItem.onOff = onOff
+            updateItem.soundOnOff = soundOnOff
             updateItem.snooze = snooze
-            updateItem.sound = sound
+            updateItem.soundName = soundName
+            updateItem.soundURL = soundURL
             updateItem.tagColor = tagColor
             updateItem.uuid = uuid
             
@@ -59,7 +65,9 @@ class DataModel : ObservableObject{
             label = "アラーム"
             onOff = true
             snooze = false
-            sound = ""
+            soundOnOff = false
+            soundURL = ""
+            soundName = ""
             tagColor = "clear"
             uuid = UUID().uuidString
  
@@ -72,7 +80,9 @@ class DataModel : ObservableObject{
         newAlarmData.label = "アラーム"
         newAlarmData.onOff = true
         newAlarmData.snooze = false
-        newAlarmData.sound = ""
+        newAlarmData.soundOnOff = false
+        newAlarmData.soundURL = ""
+        newAlarmData.soundName = ""
         newAlarmData.tagColor = "red"
         newAlarmData.uuid = UUID().uuidString
         
@@ -86,7 +96,9 @@ class DataModel : ObservableObject{
             label = "アラーム"
             onOff = true
             snooze = false
-            sound = ""
+            soundOnOff = false
+            soundURL = ""
+            soundName = ""
             tagColor = "clear"
             uuid = UUID().uuidString
             
@@ -106,7 +118,9 @@ class DataModel : ObservableObject{
         label = item.wrappedLabel
         onOff = item.onOff
         snooze = item.snooze
-        sound = item.wrappedSound
+        soundOnOff = item.soundOnOff
+        soundURL = item.wrappedSoundURL
+        soundName = item.wrappedSoundName
         tagColor = item.wrappedTagColor
         uuid = item.wrappedUuid
 
@@ -120,7 +134,9 @@ class DataModel : ObservableObject{
         updateItem.label = dataModel.label
         updateItem.onOff = dataModel.onOff
         updateItem.snooze = dataModel.snooze
-        updateItem.sound = dataModel.sound
+        updateItem.soundOnOff = dataModel.soundOnOff
+        updateItem.soundURL = dataModel.soundURL
+        updateItem.soundName = dataModel.soundName
         updateItem.tagColor = dataModel.tagColor
         updateItem.uuid = dataModel.uuid
         
@@ -134,7 +150,9 @@ class DataModel : ObservableObject{
 //        label = "アラーム"
 //        onOff = true
 //        snooze = false
-//        sound = ""
+//        soundOnOff = false
+//        soundURL = ""
+//        soundName = ""
 //        tagColor = "clear"
 //        uuid = UUID().uuidString
     }

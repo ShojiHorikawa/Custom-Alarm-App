@@ -75,29 +75,29 @@ struct SettingView: View {
                 List{
 
                     // 【移動】RepeatDaySetting.swiftへ プッシュ遷移
-                    //                    NavigationLink(destination: RepeatDaySetting(alarmId: alarmId, AlarmDate: $AlarmDate)) {
-                    //                    Text("繰り返し")
-                    //                        .foregroundColor(Color.white)
-                    //
-                    //                    Spacer()
-                    //
-                    //                    Text(textWeekDay())
-                    //                        .foregroundColor(Color.white)
-                    //                        .opacity(0.5)
-                    //
-                    //                }
+                    NavigationLink(destination: RepeatDaySettingView(dayOfRepeat: $dataModel.dayOfWeekRepeat)) {
+                                        Text("繰り返し")
+                                            .foregroundColor(Color.white)
+                    
+                                        Spacer()
+                    
+                                        Text(textWeekDay())
+                                            .foregroundColor(Color.white)
+                                            .opacity(0.5)
+                    
+                                    }
 
                     // 【移動】LabelSetting.swiftへ プッシュ遷移
-//                    NavigationLink(destination: LabelSetting()) {
-//                        Text("ラベル")
-//                            .foregroundColor(Color.white)
-//
-//                        Spacer()
-//
-//                        Text(AlarmDate.label)
-//                            .foregroundColor(Color.white)
-//                            .opacity(0.5)
-//                    }
+                    NavigationLink(destination: LabelSettingView(label: $dataModel.label,inputText: dataModel.label)) {
+                        Text("ラベル")
+                            .foregroundColor(Color.white)
+
+                        Spacer()
+
+                        Text(dataModel.label)
+                            .foregroundColor(Color.white)
+                            .opacity(0.5)
+                    }
 
 
                     // 【移動】SoundSetting.swiftへ プッシュ遷移

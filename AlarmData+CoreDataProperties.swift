@@ -21,7 +21,9 @@ extension AlarmData {
     @NSManaged public var label: String?
     @NSManaged public var dayOfWeekRepeat: [String]
     @NSManaged public var snooze: Bool
-    @NSManaged public var sound: String?
+    @NSManaged public var soundOnOff: Bool
+    @NSManaged public var soundURL: String?
+    @NSManaged public var soundName: String?
     @NSManaged public var tagColor: String?
     @NSManaged public var uuid: String?
 
@@ -31,7 +33,8 @@ extension AlarmData {
 extension AlarmData {
     public var wrappedAlarmTime: Date {alarmTime ?? Date()}
     public var wrappedLabel: String {label ?? "アラーム"}
-    public var wrappedSound: String {sound ?? ""}
+    public var wrappedSoundURL: String {soundURL ?? ""}
+    public var wrappedSoundName: String {soundName ?? ""}
     public var wrappedTagColor: String {tagColor ?? "clear"}
     public var wrappedUuid: String {uuid ?? UUID().uuidString}
 }

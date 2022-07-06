@@ -6,11 +6,13 @@
         <attribute name="label" optional="YES" attributeType="String"/>
         <attribute name="onOff" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="snooze" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="sound" optional="YES" attributeType="String"/>
+        <attribute name="soundName" optional="YES" attributeType="String"/>
+        <attribute name="soundOnOff" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="soundURL" optional="YES" attributeType="String"/>
         <attribute name="tagColor" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="AlarmData" positionX="-63" positionY="-18" width="128" height="149"/>
+        <element name="AlarmData" positionX="-63" positionY="-18" width="128" height="179"/>
     </elements>
 </model>

@@ -21,7 +21,9 @@ struct PersistenceController {
         newAlarmData.label = "アラーム"
         newAlarmData.onOff = true
         newAlarmData.snooze = false
-        newAlarmData.sound = ""
+        newAlarmData.soundOnOff = false
+        newAlarmData.soundURL = ""
+        newAlarmData.soundName = ""
         newAlarmData.tagColor = "red"
         newAlarmData.uuid = UUID().uuidString
         

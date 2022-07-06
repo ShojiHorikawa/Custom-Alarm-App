@@ -100,9 +100,11 @@ struct AlarmRow: View {
             } // HStack ここまで
             
             // AlarmRow.swiftのcanvasではONとOFFを切り替えることができないので注意
-            Toggle(isOn: $Items.onOff) {
-//                try! viewContext.save()
+            Toggle("",isOn: $Items.onOff)
+                .onChange(of: Items.onOff){ _ in
+                    try? viewContext.save()
             }// Toggle ここまで
+            
 /*
             .onChanged(of: Items.onOff){ _ in
                 try! viewContext.save()
