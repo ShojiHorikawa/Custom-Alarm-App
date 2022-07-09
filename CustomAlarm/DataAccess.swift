@@ -23,11 +23,11 @@ struct DataAccess {
     
     // 識別タグ
     enum TagColor: String,Hashable,CaseIterable{
-        case white = "white"
-        case red = "red"
-        case blue = "blue"
-        case yellow = "yellow"
-        case clear = "clear"
+        case white = "白色"
+        case red = "赤色"
+        case blue = "青色"
+        case yellow = "黄色"
+        case clear = "クリア"
     }
 }
 

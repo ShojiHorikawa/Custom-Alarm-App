@@ -10,67 +10,69 @@ import CoreData
 
 struct AlarmRow: View {
     @Environment(\.managedObjectContext) private var viewContext
-
+    
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \AlarmData.alarmTime, ascending: true)],
         animation: .default)
     private var items: FetchedResults<AlarmData>
     
     // CoreData番号
-//    var offsets: Int
-/*
-    @State var AlarmTime : Date
-    @State var DayOfWeekRepeat : [DataAccess.DayOfWeek.RawValue]
-    @State var Label : String
-    @Binding var OnOff : Bool
-    @State var Snooze : Bool
-    @State var Sound : String?
-    @State var TagColor : DataAccess.TagColor.RawValue
-*/
+    //    var offsets: Int
+    /*
+     @State var AlarmTime : Date
+     @State var DayOfWeekRepeat : [DataAccess.DayOfWeek.RawValue]
+     @State var Label : String
+     @Binding var OnOff : Bool
+     @State var Snooze : Bool
+     @State var Sound : String?
+     @State var TagColor : DataAccess.TagColor.RawValue
+     */
     // itemsから任意のitemを見つけるためのid
-//    var objectID: NSManagedObjectID
+    //    var objectID: NSManagedObjectID
     
     
     // 7/1 試しに実装
     @ObservedObject var dataModel: DataModel
     @ObservedObject var Items: AlarmData
-        
     
+    let colorArray: [DataAccess.TagColor] = DataAccess.TagColor.allCases
     
     var body: some View {
-//        VStack{
-//        if(TagColor == "white") {
-//            Rectangle()
-//                .fill(Color.white)
-//                .frame(width: 30, height: 30)
-//                .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-////                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-//
-//        } else if(TagColor == "red") {
-//            Rectangle()
-//                .fill(Color.red)
-//                .frame(width: 30, height: 30)
-//                .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-////                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-//        } else if(TagColor == "blue") {
-//            Rectangle()
-//                .fill(Color.blue)
-//                .frame(width: 30, height: 30)
-//                .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-////                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-//        } else if(TagColor == "yellow") {
-//            Rectangle()
-//                .fill(Color.yellow)
-//                .frame(width: 30, height: 30)
-//                .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-////                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-//        } // tagColor ifここまで
-//        Spacer()
-//        }
+        /*
+         VStack{
+         if(TagColor == "white") {
+         Rectangle()
+         .fill(Color.white)
+         .frame(width: 30, height: 30)
+         .offset(x: -60, y: 0) // toggleに隣接する位置に表示
+         //                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
+         
+         } else if(TagColor == "red") {
+         Rectangle()
+         .fill(Color.red)
+         .frame(width: 30, height: 30)
+         .offset(x: -60, y: 0) // toggleに隣接する位置に表示
+         //                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
+         } else if(TagColor == "blue") {
+         Rectangle()
+         .fill(Color.blue)
+         .frame(width: 30, height: 30)
+         .offset(x: -60, y: 0) // toggleに隣接する位置に表示
+         //                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
+         } else if(TagColor == "yellow") {
+         Rectangle()
+         .fill(Color.yellow)
+         .frame(width: 30, height: 30)
+         .offset(x: -60, y: 0) // toggleに隣接する位置に表示
+         //                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
+         } // tagColor ifここまで
+         Spacer()
+         }
+         */
         ZStack(alignment: .trailing) {
             HStack{
                 VStack(alignment: .leading){
-
+                    
                     HStack(alignment: .bottom){
                         // 12時間表記ならtrue、24時間表記ならfalseを返すTimejudge関数で判別
                         if(Timejudge()) {
@@ -90,7 +92,7 @@ struct AlarmRow: View {
                                 .brightness(Items.onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
                         }
                     }
- 
+                    
                     Text(Items.wrappedLabel)
                         .font(.body)
                         .fontWeight(.light)
@@ -103,59 +105,70 @@ struct AlarmRow: View {
             Toggle("",isOn: $Items.onOff)
                 .onChange(of: Items.onOff){ _ in
                     try? viewContext.save()
-            }// Toggle ここまで
+                }// Toggle ここまで
             
-/*
-            .onChanged(of: Items.onOff){ _ in
-                try! viewContext.save()
+            /*
+             .onChanged(of: Items.onOff){ _ in
+             try! viewContext.save()
+             }
+             */
+            
+            //                .onChange(of: items[offsets].onOff) { OnOff in
+            //                    let spanTime = alarmValue.alarmTime.timeIntervalSince(Date())
+            //                    if(OnOff) {
+            //                        alarmValue.startCountUp(willTime: alarmValue.alarmTime, url: URL(string: alarmValue.sound),moreDay: spanTime <= 0)
+            //                    } else {
+            //                        alarmValue.stop()
+            //                    }
+            //                }
+            
+            ForEach(colorArray,id: \.self){ color in
+                if(Items.wrappedTagColor == color.rawValue && Items.wrappedTagColor != DataAccess.TagColor.clear.rawValue){
+                    Rectangle()
+                        .fill(Color(Items.wrappedTagColor))
+                        .frame(width: 30, height: 30)
+                        .offset(x: -60, y: 0) // toggleに隣接する位置に表示
+                        .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
+                }
             }
-*/
-
-//                .onChange(of: items[offsets].onOff) { OnOff in
-//                    let spanTime = alarmValue.alarmTime.timeIntervalSince(Date())
-//                    if(OnOff) {
-//                        alarmValue.startCountUp(willTime: alarmValue.alarmTime, url: URL(string: alarmValue.sound),moreDay: spanTime <= 0)
-//                    } else {
-//                        alarmValue.stop()
-//                    }
-//                }
-
-            if(Items.wrappedTagColor == "white") {
-                    Rectangle()
-                        .fill(Color.white)
-                        .frame(width: 30, height: 30)
-                        .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-                        .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-
-            } else if(Items.wrappedTagColor == "red") {
-                    Rectangle()
-                        .fill(Color.red)
-                        .frame(width: 30, height: 30)
-                        .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-                        .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-            } else if(Items.wrappedTagColor == "blue") {
-                    Rectangle()
-                        .fill(Color.blue)
-                        .frame(width: 30, height: 30)
-                        .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-                        .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-            } else if(Items.wrappedTagColor == "yellow") {
-                    Rectangle()
-                        .fill(Color.yellow)
-                        .frame(width: 30, height: 30)
-                        .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-                        .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-                } // tagColor ifここまで
-
-            } // ZStackここまで
-        } // body ここまで
-    }
+            /*
+             if(Items.wrappedTagColor == "white") {
+             Rectangle()
+             .fill(Color.white)
+             .frame(width: 30, height: 30)
+             .offset(x: -60, y: 0) // toggleに隣接する位置に表示
+             .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
+             
+             } else if(Items.wrappedTagColor == "red") {
+             Rectangle()
+             .fill(Color.red)
+             .frame(width: 30, height: 30)
+             .offset(x: -60, y: 0) // toggleに隣接する位置に表示
+             .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
+             } else if(Items.wrappedTagColor == "blue") {
+             Rectangle()
+             .fill(Color.blue)
+             .frame(width: 30, height: 30)
+             .offset(x: -60, y: 0) // toggleに隣接する位置に表示
+             .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
+             } else if(Items.wrappedTagColor == "yellow") {
+             Rectangle()
+             .fill(Color.yellow)
+             .frame(width: 30, height: 30)
+             .offset(x: -60, y: 0) // toggleに隣接する位置に表示
+             .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
+             } // tagColor ifここまで
+             */
+            
+        } // ZStackここまで
+    } // body ここまで
+}
 
 // 12時間表示かどうかを判定 12時間表示:true,24時間表示:false
 func Timejudge() -> Bool {
     let dateFormmater = DateFormatter()
     dateFormmater.dateFormat = "yyyy-MM-dd HH:mm:ss"
-
+    
     // 12時間表記の際に date == nil となる.
     guard dateFormmater.date(from: "2000-01-01 10:00:00") != nil else { return true }
     
@@ -171,7 +184,7 @@ func timeText(dt: Date, AmPm:Bool) -> String{
         formatter.dateFormat = "h:mm"
     }
     return formatter.string(from: dt)
-
+    
     
 }
 

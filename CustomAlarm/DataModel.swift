@@ -35,7 +35,7 @@ class DataModel : ObservableObject{
     @Published var soundName = ""
     @Published var soundTime = 0
     @Published var soundTimeOnOff = false
-    @Published var tagColor: String = "clear"
+    @Published var tagColor: String = DataAccess.TagColor.clear.rawValue
     @Published var uuid = UUID().uuidString
 
     @Published var isNewData = false
@@ -74,7 +74,7 @@ class DataModel : ObservableObject{
             soundName = ""
             soundTime = 0
             soundTimeOnOff = false
-            tagColor = "clear"
+            tagColor = DataAccess.TagColor.clear.rawValue
             uuid = UUID().uuidString
  
             return
@@ -109,7 +109,7 @@ class DataModel : ObservableObject{
             soundName = ""
             soundTime = 0
             soundTimeOnOff = false
-            tagColor = "clear"
+            tagColor = DataAccess.TagColor.clear.rawValue
             uuid = UUID().uuidString
             
             
@@ -169,7 +169,7 @@ class DataModel : ObservableObject{
 //        soundName = ""
 //        soundTime = 0
 //        soundTimeOnOff = false
-//        tagColor = "clear"
+//        tagColor = DataAccess.TagColor.clear.rawValue
 //        uuid = UUID().uuidString
     }
 */

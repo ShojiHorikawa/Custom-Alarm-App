@@ -37,7 +37,7 @@ extension AlarmData {
     public var wrappedLabel: String {label ?? "アラーム"}
     public var wrappedSoundURL: String {soundURL ?? ""}
     public var wrappedSoundName: String {soundName ?? ""}
-    public var wrappedTagColor: String {tagColor ?? "clear"}
+    public var wrappedTagColor: String {tagColor ?? DataAccess.TagColor.clear.rawValue}
     public var wrappedUuid: String {uuid ?? UUID().uuidString}
 }
 

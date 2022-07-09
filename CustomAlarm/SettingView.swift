@@ -11,19 +11,19 @@ import CoreData
 struct SettingView: View {
     // AlarmData管理用のcontext
     @Environment(\.managedObjectContext) private var viewContext
-
+    
     @FetchRequest(entity: AlarmData.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \AlarmData.alarmTime, ascending: true)],
                   predicate: nil
     )private var items: FetchedResults<AlarmData>
-
-     //モーダル表示を閉じるdismiss()を使うための変数
+    
+    //モーダル表示を閉じるdismiss()を使うための変数
     @Environment(\.presentationMode) var presentationMode
-
-    // 
+    
+    //
     @ObservedObject var dataModel: DataModel
     
     var body: some View {
-//        Text("Hello")
+        //        Text("Hello")
         // 【解決】モーダル遷移のページ上部に謎の余白発生（NavigationLinkとList追加後に発生)
         NavigationView{
             VStack {
@@ -38,16 +38,16 @@ struct SettingView: View {
                         // アラーム専用の橙色に設定
                         .foregroundColor(Color("DarkOrange"))
                         .padding()
-
+                        
                         Spacer()
-
+                        
                         // 【未】完了ボタンを押したらアラーム設定のデータを変更する
                         Button("保存") {
                             if(searchIndex() >= 0) {
                                 viewContext.delete(items[searchIndex()])
                             }
                             dataModel.updateItem = AlarmData(context: viewContext)
-//                            dataModel.rewrite(dataModel: dataModel,context: viewContext)
+                            //                            dataModel.rewrite(dataModel: dataModel,context: viewContext)
                             dataModel.writeData(context: viewContext)
                             didTapDismissButton()
                         }
@@ -55,15 +55,15 @@ struct SettingView: View {
                         .foregroundColor(Color("DarkOrange"))
                         .font(.headline)
                         .padding()
-
+                        
                     } // 画面上部のHStack ここまで
-
+                    
                     Text("アラームを編集")
                         .foregroundColor(Color.white)
                         .font(.headline)
                         .padding()
                 } // ZStackここまで
-
+                
                 // 時間設定（ホイール）
                 DatePicker("",
                            selection: $dataModel.alarmTime,
@@ -71,30 +71,30 @@ struct SettingView: View {
                 )
                 .datePickerStyle(.wheel)
                 .labelsHidden()
-
+                
                 List{
-
+                    
                     // 【移動】RepeatDaySetting.swiftへ プッシュ遷移
                     NavigationLink(destination: RepeatDaySettingView(dayOfRepeat: $dataModel.dayOfWeekRepeat)) {
-                                        Text("繰り返し")
-                                            .foregroundColor(Color.white)
+                        Text("繰り返し")
+                            .foregroundColor(Color.white)
+                        
+                        Spacer()
+                        
+                        Text(textWeekDay())
+                            .foregroundColor(Color.white)
+                            .lineLimit(1)
+                            .opacity(0.5)
+                        
+                    }
                     
-                                        Spacer()
-                    
-                                        Text(textWeekDay())
-                                            .foregroundColor(Color.white)
-                                            .lineLimit(1)
-                                            .opacity(0.5)
-                    
-                                    }
-
                     // 【移動】LabelSetting.swiftへ プッシュ遷移
                     NavigationLink(destination: LabelSettingView(label: $dataModel.label)) {
                         Text("ラベル")
                             .foregroundColor(Color.white)
-
+                        
                         Spacer()
-
+                        
                         Text(dataModel.label)
                             .foregroundColor(Color.white)
                             .lineLimit(1)
@@ -105,15 +105,15 @@ struct SettingView: View {
                             dataModel.label = "アラーム"
                         }
                     }
-
-
+                    
+                    
                     // 【移動】SoundSetting.swiftへ プッシュ遷移
                     NavigationLink(destination: SoundSettingView(soundOnOff: $dataModel.soundOnOff, soundURL: $dataModel.soundURL, soundName: $dataModel.soundName,soundTime: $dataModel.soundTime, soundTimeOnOff: $dataModel.soundTimeOnOff)){
                         Text("サウンド")
                             .foregroundColor(Color.white)
-
+                        
                         Spacer()
-
+                        
                         if(dataModel.soundOnOff) {
                             Text(dataModel.soundName == "" ? "名称未設定" : dataModel.soundName)
                                 .foregroundColor(Color.white)
@@ -140,33 +140,33 @@ struct SettingView: View {
                         Text("スヌーズ")
                             .foregroundColor(Color.white)
                         Toggle(isOn: $dataModel.snooze) {
-
+                            
                         }
                     }
-
+                    
                     // 【移動】IdentifyTagSetting.swiftへ プッシュ遷移
-//                    NavigationLink(destination: colorTagSetting(alarmId: alarmId, AlarmDate: $AlarmDate)){
-//                        Text("タグ")
-//                            .foregroundColor(Color.white)
-//
-//
-//
-//                        Text(textTagColor())
-//                            .foregroundColor(Color.white)
-//                            .opacity(0.5)
-//                            .lineLimit(1)
-//                            .frame(alignment: .trailing)
-//                    } // NavigationLinkここまで
-
-
-
+                    NavigationLink(destination: ColorTagSettingView(tagColor: $dataModel.tagColor)){
+                        Text("タグ")
+                            .foregroundColor(Color.white)
+                        
+                        Spacer()
+                        
+                        Text(textTagColor())
+                            .foregroundColor(Color.white)
+                            .opacity(0.5)
+                            .lineLimit(1)
+                            .frame(alignment: .trailing)
+                    } // NavigationLinkここまで
+                    
+                    
+                    
                 } // List ここまで
                 .listStyle(.insetGrouped)  // listの線を左端まで伸ばす
                 .navigationBarHidden(true)
-
-
+                
+                
                 Spacer()
-
+                
                 // 【未】 Listのボタンと同じ角の丸い横長ボタンを上のListと少し話した場所に表示させる
                 Button(action: {
                     
@@ -178,11 +178,11 @@ struct SettingView: View {
                         viewContext.delete(items[searchIndex()])
                         try! viewContext.save()
                     }
-
- 
+                    
+                    
                     // .actionSheetを使って確認メッセージを表示する
                     // https://www.choge-blog.com/programming/swiftuiactionsheetshow/
-
+                    
                 }) {
                     Text("アラームを削除")
                         .frame(width: UIScreen.main.bounds.size.width / 6 * 5,
@@ -190,26 +190,26 @@ struct SettingView: View {
                 }
                 .foregroundColor(Color.red)
                 .buttonStyle(.bordered)
-
+                
                 Spacer()
             } // VStack ここまで
-
+            
             // NavigationBarのTitleを消すためのコードはNavigationViewの範囲内のListやVStackの{}の後ろに付ける
             .navigationBarHidden(true)
         } // NavigationView ここまで
-
+        
     } // body ここまで
-
+    
     // モーダル遷移を閉じるための関数
     private func didTapDismissButton() {
         presentationMode.wrappedValue.dismiss()
     }
-
+    
     // 設定済み繰り返し曜日を示す文字列作成関数
     func textWeekDay() -> String {
         var returnString = "しない"    // returnする文字列 登録済みの曜日
         let start = 2                 // 2(3)番目の文字列（曜日）を取得する
-
+        
         for index in 0 ..< weekArray.count {
             let stringDay = weekArray[index].rawValue
             if(dataModel.dayOfWeekRepeat.contains(weekArray[index].rawValue)) {
@@ -227,18 +227,18 @@ struct SettingView: View {
         }
         return returnString
     } //func textWeekDayここまで
-
+    
     // 設定済み識別色を示す文字列作成関数
     func textTagColor() -> String{
         var returnString = " "
         if(dataModel.tagColor != "clear") {
             returnString = dataModel.tagColor
         }
-
+        
         return returnString
     }
-
-
+    
+    
     // 既存設定用indexサーチ関数 (uuid検索)
     private func searchIndex() -> Int {
         var returnIndex: Int?
@@ -253,7 +253,7 @@ struct SettingView: View {
             return returnIndex!
         }
     }
-
+    
 } // struct ここまで
 
 //struct SettingView_Previews: PreviewProvider {

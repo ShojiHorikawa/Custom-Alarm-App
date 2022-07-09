@@ -11,7 +11,7 @@
         <attribute name="soundTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="soundTimeOnOff" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="soundURL" optional="YES" attributeType="String"/>
-        <attribute name="tagColor" optional="YES" attributeType="String"/>
+        <attribute name="tagColor" optional="YES" attributeType="String" valueTransformerName="NSSecureUnarchiveFromDataTransformerName"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
     </entity>
     <elements>

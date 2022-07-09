@@ -18,19 +18,19 @@ struct ContentView: View {
         animation: .default)
     private var items: FetchedResults<AlarmData>
     
-
-     // 新規作成用のモーダル遷移起動変数
-     @State var isModalSubviewNew = false
-     // 既存設定用のモーダル遷移起動変数
-     @State var isModalSubview = false
+    
+    // 新規作成用のモーダル遷移起動変数
+    @State var isModalSubviewNew = false
+    // 既存設定用のモーダル遷移起動変数
+    @State var isModalSubview = false
     
     // オリジナル編集・完了ボタン用変数
     @Environment(\.editMode) var editMode
-
-     // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
-     @Binding var index: String
+    
+    // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
+    @Binding var index: String
     // 識別色タグの分類表示用変数
-    @State var viewTagColor: DataAccess.TagColor = .clear
+    @State var viewTagColor: DataAccess.TagColor = DataAccess.TagColor.clear
     
     var body: some View {
         NavigationView{
@@ -44,7 +44,7 @@ struct ContentView: View {
                     ForEach(0 ..< colorArray.count - 1, id: \.self) {index in
                         Button(action: {
                             if(viewTagColor == colorArray[index]) {
-                                viewTagColor = .clear
+                                viewTagColor = DataAccess.TagColor.clear
                             } else {
                                 viewTagColor = colorArray[index]
                             }
@@ -53,22 +53,22 @@ struct ContentView: View {
                                 Rectangle()
                                     .fill(Color.white)
                                     .frame(width: 30, height: 30)
-                                    .opacity(viewTagColor == .clear || viewTagColor == .white ? 1 : 0.5) // 透明度調整（0.0~1.0)
+                                    .opacity(viewTagColor == DataAccess.TagColor.clear || viewTagColor == .white ? 1 : 0.5) // 透明度調整（0.0~1.0)
                             } else if(index == 1) {
                                 Rectangle()
                                     .fill(Color.red)
                                     .frame(width: 30, height: 30)
-                                    .opacity(viewTagColor == .clear || viewTagColor == .red ? 1 : 0.5) // 透明度調整（0.0~1.0)
+                                    .opacity(viewTagColor == DataAccess.TagColor.clear || viewTagColor == .red ? 1 : 0.5) // 透明度調整（0.0~1.0)
                             } else if(index == 2) {
                                 Rectangle()
                                     .fill(Color.blue)
                                     .frame(width: 30, height: 30)
-                                    .opacity(viewTagColor == .clear || viewTagColor == .blue ? 1 : 0.5) // 透明度調整（0.0~1.0)
+                                    .opacity(viewTagColor == DataAccess.TagColor.clear || viewTagColor == .blue ? 1 : 0.5) // 透明度調整（0.0~1.0)
                             } else if(index == 3) {
                                 Rectangle()
                                     .fill(Color.yellow)
                                     .frame(width: 30, height: 30)
-                                    .opacity(viewTagColor == .clear || viewTagColor == .yellow ? 1 : 0.5) // 透明度調整（0.0~1.0)
+                                    .opacity(viewTagColor == DataAccess.TagColor.clear || viewTagColor == .yellow ? 1 : 0.5) // 透明度調整（0.0~1.0)
                             }
                         }
                         Spacer()
@@ -80,23 +80,25 @@ struct ContentView: View {
                 List {
                     // 設定済みアラームList表示
                     ForEach(items) {item in
-                        Button(action: {
-                             
-                            dataModel.editItem(item: item)
-                            self.isModalSubview.toggle()
-                            
-                            viewTagColor = .clear
-                            
-                            index = item.wrappedUuid
-                            
-                        }) {
-                            AlarmRow(dataModel: dataModel, Items: item)
-                        }
-                        .sheet(isPresented: $isModalSubview) {
-                            if(items.count > 0 && item.alarmTime != nil && item.wrappedUuid == index) {
-                                SettingView(dataModel: dataModel)
+                        if(item.wrappedTagColor == viewTagColor.rawValue || viewTagColor == DataAccess.TagColor.clear) {
+                            Button(action: {
+                                
+                                dataModel.editItem(item: item)
+                                self.isModalSubview.toggle()
+                                
+                                viewTagColor = DataAccess.TagColor.clear
+                                
+                                index = item.wrappedUuid
+                                
+                            }) {
+                                AlarmRow(dataModel: dataModel, Items: item)
                             }
-                        } // sheetここまで
+                            .sheet(isPresented: $isModalSubview) {
+                                if(items.count > 0 && item.alarmTime != nil && item.wrappedUuid == index) {
+                                    SettingView(dataModel: dataModel)
+                                }
+                            } // sheetここまで
+                        } // ifここまで
                     } // ForEachここまで
                     .onDelete(perform: deleteAlarmData)
                 }// List ここまで
@@ -115,11 +117,11 @@ struct ContentView: View {
                                 }
                             }
                         }) {
-                                if editMode?.wrappedValue.isEditing == true {
-                                    Text("完了")
-                                } else {
-                                    Text("編集")
-                                }
+                            if editMode?.wrappedValue.isEditing == true {
+                                Text("完了")
+                            } else {
+                                Text("編集")
+                            }
                         }
                     }
                     // 「＋」ボタン
@@ -133,7 +135,7 @@ struct ContentView: View {
                             
                             dataModel.isNewData.toggle()
                             self.isModalSubviewNew.toggle()
-                            viewTagColor = .clear
+                            viewTagColor = DataAccess.TagColor.clear
                         }) {
                             Label("Add AlarmData", systemImage: "plus")
                         }
@@ -177,12 +179,12 @@ struct ContentView: View {
         }
         return returnIndex
     }
-//    // アラーム設定画面へ移行した時、もし「完了」ボタンが表示されていたら「編集」ボタンへ戻す
-//    func changeEditMode() {
-//        if editMode?.wrappedValue.isEditing == false{
-//            editMode?.wrappedValue = .active
-//        }
-//    }
+    //    // アラーム設定画面へ移行した時、もし「完了」ボタンが表示されていたら「編集」ボタンへ戻す
+    //    func changeEditMode() {
+    //        if editMode?.wrappedValue.isEditing == false{
+    //            editMode?.wrappedValue = .active
+    //        }
+    //    }
 } // structここまで
 
 private let itemFormatter: DateFormatter = {
@@ -201,34 +203,34 @@ struct ContentView_Previews: PreviewProvider {
 
 
 /*
-// オリジナルEditButton
-struct MyEditButton: View {
-    @Environment(\.editMode) var editMode
-    
-    
-    var body: some View {
-        Button(action: {
-            withAnimation() {
-                if editMode?.wrappedValue.isEditing == true {
-                    editMode?.wrappedValue = .inactive
-                } else {
-                    editMode?.wrappedValue = .active
-                }
-            }
-        }) {
-                if editMode?.wrappedValue.isEditing == true {
-                    Text("完了")
-                } else {
-                    Text("編集")
-                }
-        }
-    }
-    
-    // アラーム設定画面へ移行した時、もし「完了」ボタンが表示されていたら「編集」ボタンへ戻す
-    func changeEditMode() {
-        if editMode?.wrappedValue.isEditing == false{
-            editMode?.wrappedValue = .active
-        }
-    }
-}
-*/
+ // オリジナルEditButton
+ struct MyEditButton: View {
+ @Environment(\.editMode) var editMode
+ 
+ 
+ var body: some View {
+ Button(action: {
+ withAnimation() {
+ if editMode?.wrappedValue.isEditing == true {
+ editMode?.wrappedValue = .inactive
+ } else {
+ editMode?.wrappedValue = .active
+ }
+ }
+ }) {
+ if editMode?.wrappedValue.isEditing == true {
+ Text("完了")
+ } else {
+ Text("編集")
+ }
+ }
+ }
+ 
+ // アラーム設定画面へ移行した時、もし「完了」ボタンが表示されていたら「編集」ボタンへ戻す
+ func changeEditMode() {
+ if editMode?.wrappedValue.isEditing == false{
+ editMode?.wrappedValue = .active
+ }
+ }
+ }
+ */

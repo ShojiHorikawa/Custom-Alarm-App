@@ -26,7 +26,7 @@ struct PersistenceController {
         newAlarmData.soundName = ""
         newAlarmData.soundTime = 0
         newAlarmData.soundTimeOnOff = false
-        newAlarmData.tagColor = "red"
+        newAlarmData.tagColor = DataAccess.TagColor.clear.rawValue
         newAlarmData.uuid = UUID().uuidString
         
 //        }
