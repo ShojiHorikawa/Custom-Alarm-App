@@ -24,6 +24,8 @@ extension AlarmData {
     @NSManaged public var soundOnOff: Bool
     @NSManaged public var soundURL: String?
     @NSManaged public var soundName: String?
+    @NSManaged public var soundTime: Int16
+    @NSManaged public var soundTimeOnOff: Bool
     @NSManaged public var tagColor: String?
     @NSManaged public var uuid: String?
 

@@ -83,12 +83,13 @@ struct SettingView: View {
                     
                                         Text(textWeekDay())
                                             .foregroundColor(Color.white)
+                                            .lineLimit(1)
                                             .opacity(0.5)
                     
                                     }
 
                     // 【移動】LabelSetting.swiftへ プッシュ遷移
-                    NavigationLink(destination: LabelSettingView(label: $dataModel.label,inputText: dataModel.label)) {
+                    NavigationLink(destination: LabelSettingView(label: $dataModel.label)) {
                         Text("ラベル")
                             .foregroundColor(Color.white)
 
@@ -96,21 +97,44 @@ struct SettingView: View {
 
                         Text(dataModel.label)
                             .foregroundColor(Color.white)
+                            .lineLimit(1)
                             .opacity(0.5)
+                    }
+                    .onAppear{
+                        if(dataModel.label == "") {
+                            dataModel.label = "アラーム"
+                        }
                     }
 
 
                     // 【移動】SoundSetting.swiftへ プッシュ遷移
-//                    NavigationLink(destination: SoundSetting()){
-//                        Text("サウンド")
-//                            .foregroundColor(Color.white)
-//
-//                        Spacer()
-//
-//                        Text("朝ココ")
-//                            .foregroundColor(Color.white)
-//                            .opacity(0.5)
-//                    }
+                    NavigationLink(destination: SoundSettingView(soundOnOff: $dataModel.soundOnOff, soundURL: $dataModel.soundURL, soundName: $dataModel.soundName,soundTime: $dataModel.soundTime, soundTimeOnOff: $dataModel.soundTimeOnOff)){
+                        Text("サウンド")
+                            .foregroundColor(Color.white)
+
+                        Spacer()
+
+                        if(dataModel.soundOnOff) {
+                            Text(dataModel.soundName == "" ? "名称未設定" : dataModel.soundName)
+                                .foregroundColor(Color.white)
+                                .lineLimit(1)
+                                .opacity(0.5)
+                                .frame(alignment: .trailing)
+                        } else {
+                            Text("OFF")
+                                .foregroundColor(Color.white)
+                                .lineLimit(1)
+                                .opacity(0.5)
+                                .frame(alignment: .trailing)
+                        }
+                    }
+                    .onAppear{
+                        if(dataModel.soundURL == "") {
+                            dataModel.soundOnOff = false
+                        }
+                    }
+                    
+                    
                     HStack{
                         // スヌーズのON/OFF切り替え
                         Text("スヌーズ")
@@ -125,11 +149,13 @@ struct SettingView: View {
 //                        Text("タグ")
 //                            .foregroundColor(Color.white)
 //
-//                        Spacer()
+//
 //
 //                        Text(textTagColor())
 //                            .foregroundColor(Color.white)
 //                            .opacity(0.5)
+//                            .lineLimit(1)
+//                            .frame(alignment: .trailing)
 //                    } // NavigationLinkここまで
 
 

@@ -33,6 +33,8 @@ class DataModel : ObservableObject{
     @Published var soundOnOff = false
     @Published var soundURL = ""
     @Published var soundName = ""
+    @Published var soundTime = 0
+    @Published var soundTimeOnOff = false
     @Published var tagColor: String = "clear"
     @Published var uuid = UUID().uuidString
 
@@ -51,6 +53,8 @@ class DataModel : ObservableObject{
             updateItem.snooze = snooze
             updateItem.soundName = soundName
             updateItem.soundURL = soundURL
+            updateItem.soundTime = Int16(soundTime)
+            updateItem.soundTimeOnOff = soundTimeOnOff
             updateItem.tagColor = tagColor
             updateItem.uuid = uuid
             
@@ -68,6 +72,8 @@ class DataModel : ObservableObject{
             soundOnOff = false
             soundURL = ""
             soundName = ""
+            soundTime = 0
+            soundTimeOnOff = false
             tagColor = "clear"
             uuid = UUID().uuidString
  
@@ -83,6 +89,8 @@ class DataModel : ObservableObject{
         newAlarmData.soundOnOff = false
         newAlarmData.soundURL = ""
         newAlarmData.soundName = ""
+        newAlarmData.soundTime = 0
+        newAlarmData.soundTimeOnOff = false
         newAlarmData.tagColor = "red"
         newAlarmData.uuid = UUID().uuidString
         
@@ -99,6 +107,8 @@ class DataModel : ObservableObject{
             soundOnOff = false
             soundURL = ""
             soundName = ""
+            soundTime = 0
+            soundTimeOnOff = false
             tagColor = "clear"
             uuid = UUID().uuidString
             
@@ -122,6 +132,8 @@ class DataModel : ObservableObject{
         soundURL = item.wrappedSoundURL
         soundName = item.wrappedSoundName
         tagColor = item.wrappedTagColor
+        soundTime = Int(item.soundTime)
+        soundTimeOnOff = item.soundTimeOnOff
         uuid = item.wrappedUuid
 
         isNewData.toggle()
@@ -137,6 +149,8 @@ class DataModel : ObservableObject{
         updateItem.soundOnOff = dataModel.soundOnOff
         updateItem.soundURL = dataModel.soundURL
         updateItem.soundName = dataModel.soundName
+        updateItem.soundTime = dataModel.soundTime
+        updateItem.soundTimeOnOff = dataModel.soundTimeOnOff
         updateItem.tagColor = dataModel.tagColor
         updateItem.uuid = dataModel.uuid
         
@@ -153,6 +167,8 @@ class DataModel : ObservableObject{
 //        soundOnOff = false
 //        soundURL = ""
 //        soundName = ""
+//        soundTime = 0
+//        soundTimeOnOff = false
 //        tagColor = "clear"
 //        uuid = UUID().uuidString
     }

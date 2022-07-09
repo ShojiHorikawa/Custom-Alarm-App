@@ -8,11 +8,13 @@
         <attribute name="snooze" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="soundName" optional="YES" attributeType="String"/>
         <attribute name="soundOnOff" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="soundTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="soundTimeOnOff" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="soundURL" optional="YES" attributeType="String"/>
         <attribute name="tagColor" optional="YES" attributeType="String"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="AlarmData" positionX="-63" positionY="-18" width="128" height="179"/>
+        <element name="AlarmData" positionX="-63" positionY="-18" width="128" height="209"/>
     </elements>
 </model>

@@ -75,7 +75,7 @@ struct ContentView: View {
                     }
                     
                 } // HStack ここまで
-                .padding(.top)
+                .padding(.vertical)
                 
                 List {
                     // 設定済みアラームList表示
