@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct CustomAlarmApp: App {
     let persistenceController = PersistenceController.shared
+    @Environment(\.scenePhase) private var scenePhase
     @State var index = ""
 
     var body: some Scene {
@@ -17,5 +18,17 @@ struct CustomAlarmApp: App {
             ContentView(index: $index)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
+        .onChange(of: scenePhase) { phase in
+            if phase == .background {
+                print("バックグラウンド！")
+            }
+            if phase == .active {
+                print("フォアグラウンド！")
+            }
+            if phase == .inactive {
+                print("バックグラウンドorフォアグラウンド直前")
+            }
+        }
     }
 }
+

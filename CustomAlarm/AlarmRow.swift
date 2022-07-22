@@ -30,6 +30,9 @@ struct AlarmRow: View {
     // itemsから任意のitemを見つけるためのid
     //    var objectID: NSManagedObjectID
     
+    // 通知設定用変数
+    @EnvironmentObject var notificationModel:NotificationModel
+    
     
     // 7/1 試しに実装
     @ObservedObject var dataModel: DataModel
@@ -103,15 +106,30 @@ struct AlarmRow: View {
             
             // AlarmRow.swiftのcanvasではONとOFFを切り替えることができないので注意
             Toggle("",isOn: $Items.onOff)
-                .onChange(of: Items.onOff){ _ in
-                    try? viewContext.save()
+                .onChange(of: Items.onOff){ OnOff in
+                    if(OnOff){
+                        // 全ての年月日更新(並び順を崩さないため)
+                        for item in items {
+                            item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
+                        }
+                        
+                        self.notificationModel.setNotification(time: Items.wrappedAlarmTime, dayWeek: Items.dayOfWeekRepeat, uuid: Items.wrappedUuid, label: Items.wrappedLabel)
+                    } else {
+                        self.notificationModel.removeNotification(notificationIdentifier: Items.wrappedUuid)
+                    }
+                    try! viewContext.save()
                 }// Toggle ここまで
             
-            /*
-             .onChanged(of: Items.onOff){ _ in
-             try! viewContext.save()
-             }
-             */
+            
+//             .onChange(of: Items.onOff){ OnOff in
+//                 if(OnOff){
+//                     self.notificationModel.setNotification(item: Items)
+//                 } else {
+//                     self.notificationModel.removeNotification(notificationIdentifier: Items.wrappedUuid)
+//                 }
+////             try! viewContext.save()
+//             }
+             
             
             //                .onChange(of: items[offsets].onOff) { OnOff in
             //                    let spanTime = alarmValue.alarmTime.timeIntervalSince(Date())

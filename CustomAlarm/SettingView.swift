@@ -19,6 +19,9 @@ struct SettingView: View {
     //モーダル表示を閉じるdismiss()を使うための変数
     @Environment(\.presentationMode) var presentationMode
     
+    // 通知設定用変数
+    @EnvironmentObject var notificationModel:NotificationModel
+    
     //
     @ObservedObject var dataModel: DataModel
     
@@ -46,9 +49,24 @@ struct SettingView: View {
                             if(searchIndex() >= 0) {
                                 viewContext.delete(items[searchIndex()])
                             }
+                            dataModel.alarmTime = secondLoss(willTime: dataModel.alarmTime) // 秒数以下切り捨て
+                            dataModel.onOff = true
+                            
+                            // 年月日の更新
+                            dataModel.alarmTime = updateTime(didAlarmTime: dataModel.alarmTime)
+                            
                             dataModel.updateItem = AlarmData(context: viewContext)
                             //                            dataModel.rewrite(dataModel: dataModel,context: viewContext)
+                            
+                            self.notificationModel.setNotification(time: dataModel.alarmTime, dayWeek: dataModel.dayOfWeekRepeat, uuid: dataModel.uuid, label: dataModel.label)
+                            
+                            // 他の設定の年月日更新(並び順を崩さないため)
+                            for item in items {
+                                item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
+                            }
+                            
                             dataModel.writeData(context: viewContext)
+                            
                             didTapDismissButton()
                         }
                         // アラーム専用の橙色に設定
@@ -231,13 +249,14 @@ struct SettingView: View {
     // 設定済み識別色を示す文字列作成関数
     func textTagColor() -> String{
         var returnString = " "
-        if(dataModel.tagColor != "clear") {
+        if(dataModel.tagColor != DataAccess.TagColor.clear.rawValue) {
             returnString = dataModel.tagColor
+        } else {
+            returnString = "なし"
         }
         
         return returnString
     }
-    
     
     // 既存設定用indexサーチ関数 (uuid検索)
     private func searchIndex() -> Int {
@@ -252,6 +271,15 @@ struct SettingView: View {
         } else {
             return returnIndex!
         }
+    }
+    
+    // アラーム設定時間の秒数以下切り捨て
+    private func secondLoss(willTime: Date) -> Date {
+        let calendar = Calendar(identifier: .gregorian)
+        let noSecondTime = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: willTime)
+        let newWillTime = calendar.date(from: noSecondTime)
+        
+        return newWillTime!
     }
     
 } // struct ここまで

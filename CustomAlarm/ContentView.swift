@@ -92,10 +92,12 @@ struct ContentView: View {
                                 
                             }) {
                                 AlarmRow(dataModel: dataModel, Items: item)
+                                    .environmentObject(NotificationModel()) // 通知用
                             }
                             .sheet(isPresented: $isModalSubview) {
                                 if(items.count > 0 && item.alarmTime != nil && item.wrappedUuid == index) {
                                     SettingView(dataModel: dataModel)
+                                        .environmentObject(NotificationModel()) // 通知用
                                 }
                             } // sheetここまで
                         } // ifここまで
@@ -141,6 +143,7 @@ struct ContentView: View {
                         }
                         .sheet(isPresented: $isModalSubviewNew) {
                             SettingView(dataModel: DataModel())
+                                .environmentObject(NotificationModel()) // 通知用
                         } // sheetここまで
                     } // ToolbarItemここまで
                 }
@@ -179,20 +182,21 @@ struct ContentView: View {
         }
         return returnIndex
     }
-    //    // アラーム設定画面へ移行した時、もし「完了」ボタンが表示されていたら「編集」ボタンへ戻す
-    //    func changeEditMode() {
-    //        if editMode?.wrappedValue.isEditing == false{
-    //            editMode?.wrappedValue = .active
-    //        }
-    //    }
 } // structここまで
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
+
+// 時間、分、秒以外を更新（新規作成時の年,月,日が保存されている状態なので、それを変更）
+func updateTime(didAlarmTime: Date)->Date{
+    let elapsedDays = Calendar.current.dateComponents([.day], from: didAlarmTime, to: Date()).day
+    var setAlarmTime = Calendar.current.date(byAdding: .day, value: elapsedDays!, to: didAlarmTime)!
+    
+    // dataModel.alarmTimeが現在時刻(〇時〇分)と同じ、またはそれ以前の場合は1日分の時間を足す
+    if(setAlarmTime.timeIntervalSinceNow <= 0){
+        setAlarmTime = Calendar.current.date(byAdding: .day, value: 1, to: setAlarmTime)!
+    }
+    
+    return setAlarmTime
+}
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
@@ -200,6 +204,12 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
+//func scheduleOnOff(items: FetchedResults<AlarmData>){
+//    var setAlarmNowTime:[Int] = []
+//    for item in items{
+//        setAlarmNowTime.push(Int(item.wrappedAlarmTime.timeIntervalSinceNow))
+//    }
+//}
 
 
 /*
