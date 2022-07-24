@@ -7,9 +7,15 @@
 
 import SwiftUI
 import CoreData
+import YouTubePlayerKit
 
 struct ContentView: View {
+    // CoreData保存用変数
     @Environment(\.managedObjectContext) var viewContext
+    
+    // アプリの起動状態検知用の変数
+    @Environment(\.scenePhase) private var scenePhase
+    
     @StateObject private var dataModel = DataModel()
     
     @FetchRequest(
@@ -31,6 +37,10 @@ struct ContentView: View {
     @Binding var index: String
     // 識別色タグの分類表示用変数
     @State var viewTagColor: DataAccess.TagColor = DataAccess.TagColor.clear
+    
+    @State var youTubePlayer: YouTubePlayer = ""
+    
+    @State var timer: Timer!
     
     var body: some View {
         NavigationView{
@@ -82,7 +92,6 @@ struct ContentView: View {
                     ForEach(items) {item in
                         if(item.wrappedTagColor == viewTagColor.rawValue || viewTagColor == DataAccess.TagColor.clear) {
                             Button(action: {
-                                
                                 dataModel.editItem(item: item)
                                 self.isModalSubview.toggle()
                                 
@@ -91,15 +100,76 @@ struct ContentView: View {
                                 index = item.wrappedUuid
                                 
                             }) {
-                                AlarmRow(dataModel: dataModel, Items: item)
+                                AlarmRow(dataModel: dataModel, Item: item, youTubePlayer: $youTubePlayer)
                                     .environmentObject(NotificationModel()) // 通知用
                             }
                             .sheet(isPresented: $isModalSubview) {
                                 if(items.count > 0 && item.alarmTime != nil && item.wrappedUuid == index) {
                                     SettingView(dataModel: dataModel)
                                         .environmentObject(NotificationModel()) // 通知用
+                                        .onDisappear{
+                                            // OnOffの更新
+                                            for item in items{
+                                                if(item.onOff){
+                                                    // アラームの設定をOFFにする
+                                                    if(item.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.dayOfWeekRepeat == []){
+                                                        item.onOff = false
+                                                    }
+                                                    // アラームの設定 年月日を更新
+                                                    item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
+                                                }
+                                            }
+                                            try! viewContext.save()
+                                            
+                                            // Timerの実態があるときは停止させる
+                                            self.timer?.invalidate()
+                                            
+                                            // 設定時刻までの時間計算
+                                            var setTime = item.wrappedAlarmTime
+                                            // timeが現在時刻(〇時〇分)と同じ、またはそれ以前の場合は1日分の時間を足す
+                                            if(setTime.timeIntervalSinceNow <= 0){
+                                                setTime = Calendar.current.date(byAdding: .day, value: 1, to: setTime)!
+                                            }
+                                            var durringTime: Double = 0.0
+                                            if(item.dayOfWeekRepeat == []){ //日時
+                                                // 曜日指定がない時
+                                                durringTime = setTime.timeIntervalSinceNow//目標の時間との時間差(秒)
+                                            } else {
+                                                // 今日の曜日を取得 (日曜日=0,月曜日=1,....土曜日=6 を返す)
+                                                let weekDay = Calendar.current.component(.weekday, from: Date()) % 7
+                                                let weekArray: [DataAccess.DayOfWeek] = DataAccess.DayOfWeek.allCases // 検索用 曜日配列
+                                                
+                                                var num = 0 // Loop用変数(指定した曜日が何日後か調べる)
+                                                while durringTime == 0.0{
+                                                    if(item.dayOfWeekRepeat.contains(weekArray[(weekDay+num) % 7].rawValue)){
+                                                        durringTime = Double(num * 24 * 60 * 60) + setTime.timeIntervalSinceNow
+                                                    }
+                                                    num += 1
+                                                }
+                                            }
+                                            
+                                            
+                                            // 既存設定用indexサーチ関数 (uuid検索)
+                                            var returnIndex: Int?
+                                            for index in 0 ..< items.count {
+                                                if(items[index].wrappedUuid == item.wrappedUuid){
+                                                    returnIndex = index
+                                                }
+                                            }
+                                            self.timer = Timer.scheduledTimer(withTimeInterval: durringTime, repeats: false){ _ in
+                                                if(returnIndex != nil){
+                                                    self.items[returnIndex!].onOff = false
+                                                }
+                                            }
+                                        } // onDisapperここまで
+                                        .onAppear{
+                                            timer?.invalidate()
+                                            timer = nil
+                                        }
                                 }
                             } // sheetここまで
+                            
+                            
                         } // ifここまで
                     } // ForEachここまで
                     .onDelete(perform: deleteAlarmData)
@@ -151,6 +221,13 @@ struct ContentView: View {
             
             .navigationBarTitle("アラーム")
         } // NavigationViewここまで
+        
+        .onChange(of: scenePhase) { phase in
+            if phase == .inactive {
+                // itemsのデータ更新
+                try! viewContext.save()
+            }
+        }
     } // bodyここまで
     
     // データ削除
@@ -185,17 +262,26 @@ struct ContentView: View {
 } // structここまで
 
 
-// 時間、分、秒以外を更新（新規作成時の年,月,日が保存されている状態なので、それを変更）
+// 時間、分、秒以外を更新（新規作成時の年,月,日が保存されている状態なので、それを変更） ただし繰り返し曜日で設定されるはずの年月日はitemに記録されない
 func updateTime(didAlarmTime: Date)->Date{
-    let elapsedDays = Calendar.current.dateComponents([.day], from: didAlarmTime, to: Date()).day
-    var setAlarmTime = Calendar.current.date(byAdding: .day, value: elapsedDays!, to: didAlarmTime)!
+    let elapsedDays = Calendar.current.dateComponents([.day], from: resetTime(date: didAlarmTime), to: Date()).day
+    let setAlarmTime = Calendar.current.date(byAdding: .day, value: elapsedDays!, to: didAlarmTime)!
     
-    // dataModel.alarmTimeが現在時刻(〇時〇分)と同じ、またはそれ以前の場合は1日分の時間を足す
-    if(setAlarmTime.timeIntervalSinceNow <= 0){
-        setAlarmTime = Calendar.current.date(byAdding: .day, value: 1, to: setAlarmTime)!
-    }
+    
+    // 「setAlarmTimeが現在時刻(〇時〇分)と同じ、またはそれ以前の場合は1日分の時間を足す」という処理は通知作成処理にて行われる
     
     return setAlarmTime
+}
+
+func resetTime(date: Date) -> Date {
+    let calendar: Calendar = Calendar(identifier: .gregorian)
+    var components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+
+    components.hour = 0
+    components.minute = 0
+    components.second = 0
+
+    return calendar.date(from: components)!
 }
 
 struct ContentView_Previews: PreviewProvider {

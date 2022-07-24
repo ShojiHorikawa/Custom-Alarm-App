@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import YouTubePlayerKit
 
 struct AlarmRow: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -16,62 +17,22 @@ struct AlarmRow: View {
         animation: .default)
     private var items: FetchedResults<AlarmData>
     
-    // CoreData番号
-    //    var offsets: Int
-    /*
-     @State var AlarmTime : Date
-     @State var DayOfWeekRepeat : [DataAccess.DayOfWeek.RawValue]
-     @State var Label : String
-     @Binding var OnOff : Bool
-     @State var Snooze : Bool
-     @State var Sound : String?
-     @State var TagColor : DataAccess.TagColor.RawValue
-     */
-    // itemsから任意のitemを見つけるためのid
-    //    var objectID: NSManagedObjectID
-    
     // 通知設定用変数
     @EnvironmentObject var notificationModel:NotificationModel
     
     
     // 7/1 試しに実装
     @ObservedObject var dataModel: DataModel
-    @ObservedObject var Items: AlarmData
+    @ObservedObject var Item: AlarmData
+    
+    // Youtube再生用のモーダル遷移起動変数
+//    @State var isModalSubviewYT = false
+    
+    @Binding var youTubePlayer : YouTubePlayer
     
     let colorArray: [DataAccess.TagColor] = DataAccess.TagColor.allCases
     
     var body: some View {
-        /*
-         VStack{
-         if(TagColor == "white") {
-         Rectangle()
-         .fill(Color.white)
-         .frame(width: 30, height: 30)
-         .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-         //                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-         
-         } else if(TagColor == "red") {
-         Rectangle()
-         .fill(Color.red)
-         .frame(width: 30, height: 30)
-         .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-         //                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-         } else if(TagColor == "blue") {
-         Rectangle()
-         .fill(Color.blue)
-         .frame(width: 30, height: 30)
-         .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-         //                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-         } else if(TagColor == "yellow") {
-         Rectangle()
-         .fill(Color.yellow)
-         .frame(width: 30, height: 30)
-         .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-         //                .opacity(items[offsets].onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-         } // tagColor ifここまで
-         Spacer()
-         }
-         */
         ZStack(alignment: .trailing) {
             HStack{
                 VStack(alignment: .leading){
@@ -79,107 +40,148 @@ struct AlarmRow: View {
                     HStack(alignment: .bottom){
                         // 12時間表記ならtrue、24時間表記ならfalseを返すTimejudge関数で判別
                         if(Timejudge()) {
-                            Text(timeText(dt:Items.wrappedAlarmTime,AmPm: true))
+                            Text(timeText(dt:Item.wrappedAlarmTime,AmPm: true))
                                 .font(.system(size: 35))
                                 .fontWeight(.light)
-                                .brightness(Items.onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
+                                .brightness(Item.onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
                                 .padding(.bottom,5)
-                            Text(timeText(dt:Items.wrappedAlarmTime,AmPm: false))
+                            Text(timeText(dt:Item.wrappedAlarmTime,AmPm: false))
                                 .font(.system(size: 50))
                                 .fontWeight(.light)
-                                .brightness(Items.onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
+                                .brightness(Item.onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
                         } else {
-                            Text(Items.wrappedAlarmTime.formatted(.dateTime.hour().minute()))
+                            Text(Item.wrappedAlarmTime.formatted(.dateTime.hour().minute()))
                                 .font(.system(size: 50))
                                 .fontWeight(.light)
-                                .brightness(Items.onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
+                                .brightness(Item.onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
                         }
                     }
                     
-                    Text(Items.wrappedLabel)
+                    Text(Item.wrappedLabel)
                         .font(.body)
                         .fontWeight(.light)
-                        .brightness(Items.onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
+                        .brightness(Item.onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
                 } // VStack ここまで
                 Spacer()
             } // HStack ここまで
             
             // AlarmRow.swiftのcanvasではONとOFFを切り替えることができないので注意
-            Toggle("",isOn: $Items.onOff)
-                .onChange(of: Items.onOff){ OnOff in
+            Toggle("",isOn: $Item.onOff)
+                .onChange(of: Item.onOff){ OnOff in
                     if(OnOff){
                         // 全ての年月日更新(並び順を崩さないため)
                         for item in items {
                             item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
                         }
                         
-                        self.notificationModel.setNotification(time: Items.wrappedAlarmTime, dayWeek: Items.dayOfWeekRepeat, uuid: Items.wrappedUuid, label: Items.wrappedLabel)
+                        // 通知予約
+                        self.notificationModel.setNotification(time: Item.wrappedAlarmTime, dayWeek: Item.dayOfWeekRepeat, uuid: Item.wrappedUuid, label: Item.wrappedLabel)
+                        
+                        // itemsを更新する方法を模索中
+                        
+//                        // 最も時間の早いアラームのOFF予約
+                        var shortTime = items[0]
+                        for item in items{
+                            if(shortTime.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.onOff){
+                                shortTime = item
+                            }
+                        }
+                        if(shortTime == Item){
+                            startCountUp()
+                        }
                     } else {
-                        self.notificationModel.removeNotification(notificationIdentifier: Items.wrappedUuid)
+                        // 通知予約破棄
+                        self.notificationModel.removeNotification(notificationIdentifier: Item.wrappedUuid)
+                        if(Item.soundOnOff){
+                            youTubePlayer = YouTubePlayer(
+                                source: .url(Item.wrappedSoundURL),
+                                configuration: .init(
+                                    isUserInteractionEnabled: false,
+                                    autoPlay: true,
+                                    loopEnabled: true
+                                )
+                                )
+                            // Youtube再生画面起動
+//                            self.isModalSubviewYT = true
+                        }
+                        var shortTime = items[0]
+                        for item in items{
+                            if(shortTime.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.onOff){
+                                shortTime = item
+                            }
+                        }
+                        if(shortTime.onOff || shortTime == Item){
+                            stop()
+                        }
+                        
                     }
                     try! viewContext.save()
                 }// Toggle ここまで
-            
-            
-//             .onChange(of: Items.onOff){ OnOff in
-//                 if(OnOff){
-//                     self.notificationModel.setNotification(item: Items)
-//                 } else {
-//                     self.notificationModel.removeNotification(notificationIdentifier: Items.wrappedUuid)
-//                 }
-////             try! viewContext.save()
-//             }
-             
-            
-            //                .onChange(of: items[offsets].onOff) { OnOff in
-            //                    let spanTime = alarmValue.alarmTime.timeIntervalSince(Date())
-            //                    if(OnOff) {
-            //                        alarmValue.startCountUp(willTime: alarmValue.alarmTime, url: URL(string: alarmValue.sound),moreDay: spanTime <= 0)
-            //                    } else {
-            //                        alarmValue.stop()
-            //                    }
-            //                }
+//            .sheet(isPresented: $isModalSubviewYT) {
+//                YoutubePlayView(youTubePlayer: youTubePlayer, IntervalTime: Item.soundReturnTime, seekTime: Item.soundTime)
+//            } // sheetここまで
             
             ForEach(colorArray,id: \.self){ color in
-                if(Items.wrappedTagColor == color.rawValue && Items.wrappedTagColor != DataAccess.TagColor.clear.rawValue){
+                if(Item.wrappedTagColor == color.rawValue && Item.wrappedTagColor != DataAccess.TagColor.clear.rawValue){
                     Rectangle()
-                        .fill(Color(Items.wrappedTagColor))
+                        .fill(Color(Item.wrappedTagColor))
                         .frame(width: 30, height: 30)
                         .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-                        .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
+                        .opacity(Item.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
                 }
             }
-            /*
-             if(Items.wrappedTagColor == "white") {
-             Rectangle()
-             .fill(Color.white)
-             .frame(width: 30, height: 30)
-             .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-             .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-             
-             } else if(Items.wrappedTagColor == "red") {
-             Rectangle()
-             .fill(Color.red)
-             .frame(width: 30, height: 30)
-             .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-             .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-             } else if(Items.wrappedTagColor == "blue") {
-             Rectangle()
-             .fill(Color.blue)
-             .frame(width: 30, height: 30)
-             .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-             .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-             } else if(Items.wrappedTagColor == "yellow") {
-             Rectangle()
-             .fill(Color.yellow)
-             .frame(width: 30, height: 30)
-             .offset(x: -60, y: 0) // toggleに隣接する位置に表示
-             .opacity(Items.onOff ? 1.0 : 0.5) // 透明度調整（0.0~1.0)
-             } // tagColor ifここまで
-             */
-            
         } // ZStackここまで
     } // body ここまで
+    
+    // アラームが鳴るとアラーム設定がOFFになる
+    @State var timer: Timer!
+    func startCountUp(){
+        // 設定時刻までの時間計算
+        var setTime = Item.wrappedAlarmTime
+        // timeが現在時刻(〇時〇分)と同じ、またはそれ以前の場合は1日分の時間を足す
+        if(setTime.timeIntervalSinceNow <= 0){
+            setTime = Calendar.current.date(byAdding: .day, value: 1, to: setTime)!
+        }
+        var durringTime: Double = 0.0
+        if(Item.dayOfWeekRepeat == []){ //日時
+            // 曜日指定がない時
+            durringTime = setTime.timeIntervalSinceNow//目標の時間との時間差(秒)
+        } else {
+            // 今日の曜日を取得 (日曜日=0,月曜日=1,....土曜日=6 を返す)
+            let weekDay = Calendar.current.component(.weekday, from: Date()) % 7
+            let weekArray: [DataAccess.DayOfWeek] = DataAccess.DayOfWeek.allCases // 検索用 曜日配列
+            
+            var num = 0 // Loop用変数(指定した曜日が何日後か調べる)
+            while durringTime == 0.0{
+                if(Item.dayOfWeekRepeat.contains(weekArray[(weekDay+num) % 7].rawValue)){
+                    durringTime = Double(num * 24 * 60 * 60) + setTime.timeIntervalSinceNow
+                }
+                num += 1
+            }
+        }
+
+        // Timerの実態があるときは停止させる
+        self.timer?.invalidate()
+        
+        // 既存設定用indexサーチ関数 (uuid検索)
+        var returnIndex: Int?
+        for index in 0 ..< items.count {
+            if(items[index].uuid == Item.uuid){
+                returnIndex = index
+            }
+        }
+        
+        self.timer = Timer.scheduledTimer(withTimeInterval: durringTime, repeats: false){ _ in
+            if(Item.wrappedAlarmTime.timeIntervalSinceNow > 0 && returnIndex != nil){
+                self.items[returnIndex!].onOff = false
+            }
+        }
+    }
+
+    private func stop(){
+        timer?.invalidate()
+        timer = nil
+    }
 }
 
 // 12時間表示かどうかを判定 12時間表示:true,24時間表示:false

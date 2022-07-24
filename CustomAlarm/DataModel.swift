@@ -10,20 +10,6 @@ import Foundation
 import SwiftUI
 import CoreData
 
-/*
- 
- newAlarmData.alarmTime = Date()
- newAlarmData.dayOfWeekRepeat = []
- newAlarmData.label = "アラーム"
- newAlarmData.onOff = true
- newAlarmData.snooze = false
- newAlarmData.soundOnOff = false
- newAlarmData.sound = ""
- newAlarmData.soundName = ""
- newAlarmData.tagColor = "red"
- newAlarmData.uuid = UUID().uuidString
- 
- */
 class DataModel : ObservableObject{
     @Published var alarmTime = Date()
     @Published var dayOfWeekRepeat: [String] = []
@@ -33,8 +19,9 @@ class DataModel : ObservableObject{
     @Published var soundOnOff = false
     @Published var soundURL = ""
     @Published var soundName = ""
-    @Published var soundTime = 0
+    @Published var soundTime: Int = 0
     @Published var soundTimeOnOff = false
+    @Published var soundReturnTime: Int = 0
     @Published var tagColor: String = DataAccess.TagColor.clear.rawValue
     @Published var uuid = UUID().uuidString
 
@@ -55,6 +42,7 @@ class DataModel : ObservableObject{
             updateItem.soundURL = soundURL
             updateItem.soundTime = Int16(soundTime)
             updateItem.soundTimeOnOff = soundTimeOnOff
+            updateItem.soundReturnTime = Int16(soundReturnTime)
             updateItem.tagColor = tagColor
             updateItem.uuid = uuid
             
@@ -74,6 +62,7 @@ class DataModel : ObservableObject{
             soundName = ""
             soundTime = 0
             soundTimeOnOff = false
+            soundReturnTime = 0
             tagColor = DataAccess.TagColor.clear.rawValue
             uuid = UUID().uuidString
  
@@ -91,6 +80,7 @@ class DataModel : ObservableObject{
         newAlarmData.soundName = ""
         newAlarmData.soundTime = 0
         newAlarmData.soundTimeOnOff = false
+        newAlarmData.soundReturnTime = 0
         newAlarmData.tagColor = "red"
         newAlarmData.uuid = UUID().uuidString
         
@@ -109,6 +99,7 @@ class DataModel : ObservableObject{
             soundName = ""
             soundTime = 0
             soundTimeOnOff = false
+            soundReturnTime = 0
             tagColor = DataAccess.TagColor.clear.rawValue
             uuid = UUID().uuidString
             
@@ -134,44 +125,12 @@ class DataModel : ObservableObject{
         tagColor = item.wrappedTagColor
         soundTime = Int(item.soundTime)
         soundTimeOnOff = item.soundTimeOnOff
+        soundReturnTime = Int(item.soundReturnTime)
         uuid = item.wrappedUuid
 
         isNewData.toggle()
     }
-/*
-    func rewrite(dataModel: DataModel,context :NSManagedObjectContext) {
-        let updateItem = AlarmData(context: context)
-        updateItem.alarmTime = dataModel.alarmTime
-        updateItem.dayOfWeekRepeat = dataModel.dayOfWeekRepeat
-        updateItem.label = dataModel.label
-        updateItem.onOff = dataModel.onOff
-        updateItem.snooze = dataModel.snooze
-        updateItem.soundOnOff = dataModel.soundOnOff
-        updateItem.soundURL = dataModel.soundURL
-        updateItem.soundName = dataModel.soundName
-        updateItem.soundTime = dataModel.soundTime
-        updateItem.soundTimeOnOff = dataModel.soundTimeOnOff
-        updateItem.tagColor = dataModel.tagColor
-        updateItem.uuid = dataModel.uuid
-        
-        try! context.save()
-        
-//        updateItem = nil
-//        isNewData.toggle()
-//        
-//        alarmTime = Date()
-//        dayOfWeekRepeat = []
-//        label = "アラーム"
-//        onOff = true
-//        snooze = false
-//        soundOnOff = false
-//        soundURL = ""
-//        soundName = ""
-//        soundTime = 0
-//        soundTimeOnOff = false
-//        tagColor = DataAccess.TagColor.clear.rawValue
-//        uuid = UUID().uuidString
-    }
-*/
+    
+    
 }
 

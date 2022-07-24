@@ -25,11 +25,12 @@
 		6D4BB4E82869B9CC00F4C115 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4BB4E72869B9CC00F4C115 /* SettingView.swift */; };
 		6D4BB4EA2869BE6700F4C115 /* DataAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4BB4E92869BE6700F4C115 /* DataAccess.swift */; };
 		6D4BB50F286D882A00F4C115 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4BB50E286D882A00F4C115 /* DataModel.swift */; };
-		C0E9463937A3B4C5FCD4EC52 /* Pods_CustomAlarm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6279FD7105F18301B824B06E /* Pods_CustomAlarm.framework */; };
+		6D978B29288CFA4B007D13B2 /* YoutubePlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D978B28288CFA4B007D13B2 /* YoutubePlayView.swift */; };
+		6D978B2E288D19A4007D13B2 /* YouTubePlayerKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6D978B2D288D19A4007D13B2 /* YouTubePlayerKit */; };
+		6D978B30288D2D77007D13B2 /* ForgroungOnOff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D978B2F288D2D77007D13B2 /* ForgroungOnOff.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6279FD7105F18301B824B06E /* Pods_CustomAlarm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CustomAlarm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D11FCB22871DD8A003DD6ED /* LabelSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelSettingView.swift; sourceTree = "<group>"; };
 		6D11FCB428751A89003DD6ED /* RepeatDaySettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatDaySettingView.swift; sourceTree = "<group>"; };
 		6D11FCB628752948003DD6ED /* SoundSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundSettingView.swift; sourceTree = "<group>"; };
@@ -50,8 +51,8 @@
 		6D4BB4E72869B9CC00F4C115 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		6D4BB4E92869BE6700F4C115 /* DataAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataAccess.swift; sourceTree = "<group>"; };
 		6D4BB50E286D882A00F4C115 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
-		B3A323BECFAB7EC212414890 /* Pods-CustomAlarm.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CustomAlarm.debug.xcconfig"; path = "Target Support Files/Pods-CustomAlarm/Pods-CustomAlarm.debug.xcconfig"; sourceTree = "<group>"; };
-		FA90C8E0BA87E9FD444A2BA9 /* Pods-CustomAlarm.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CustomAlarm.release.xcconfig"; path = "Target Support Files/Pods-CustomAlarm/Pods-CustomAlarm.release.xcconfig"; sourceTree = "<group>"; };
+		6D978B28288CFA4B007D13B2 /* YoutubePlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YoutubePlayView.swift; sourceTree = "<group>"; };
+		6D978B2F288D2D77007D13B2 /* ForgroungOnOff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForgroungOnOff.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,31 +60,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C0E9463937A3B4C5FCD4EC52 /* Pods_CustomAlarm.framework in Frameworks */,
+				6D978B2E288D19A4007D13B2 /* YouTubePlayerKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		23CD1318C996B6F832EAA70E /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				B3A323BECFAB7EC212414890 /* Pods-CustomAlarm.debug.xcconfig */,
-				FA90C8E0BA87E9FD444A2BA9 /* Pods-CustomAlarm.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		577E21E399E693DBBD57E5A9 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				6279FD7105F18301B824B06E /* Pods_CustomAlarm.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		6D4BB4C22869A3D200F4C115 = {
 			isa = PBXGroup;
 			children = (
@@ -91,8 +74,6 @@
 				6D4BB4E42869AE7900F4C115 /* AlarmData+CoreDataProperties.swift */,
 				6D4BB4CD2869A3D200F4C115 /* CustomAlarm */,
 				6D4BB4CC2869A3D200F4C115 /* Products */,
-				23CD1318C996B6F832EAA70E /* Pods */,
-				577E21E399E693DBBD57E5A9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -111,10 +92,12 @@
 				6D4BB4CE2869A3D200F4C115 /* CustomAlarmApp.swift */,
 				6D4BB4D02869A3D200F4C115 /* ContentView.swift */,
 				6D4BB4E12869A6C400F4C115 /* AlarmRow.swift */,
+				6D978B28288CFA4B007D13B2 /* YoutubePlayView.swift */,
 				6D3AE238287D5534005ECED6 /* BackGroundTask.swift */,
 				6D3AE23A287FF03D005ECED6 /* NotificationLocally.swift */,
 				6D4BB4D22869A3D400F4C115 /* Assets.xcassets */,
 				6D4BB4E72869B9CC00F4C115 /* SettingView.swift */,
+				6D978B2F288D2D77007D13B2 /* ForgroungOnOff.swift */,
 				6D11FCB428751A89003DD6ED /* RepeatDaySettingView.swift */,
 				6D11FCB22871DD8A003DD6ED /* LabelSettingView.swift */,
 				6D11FCB628752948003DD6ED /* SoundSettingView.swift */,
@@ -143,17 +126,18 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6D4BB4DE2869A3D400F4C115 /* Build configuration list for PBXNativeTarget "CustomAlarm" */;
 			buildPhases = (
-				2A0449EB85A9B106542B19A0 /* [CP] Check Pods Manifest.lock */,
 				6D4BB4C72869A3D200F4C115 /* Sources */,
 				6D4BB4C82869A3D200F4C115 /* Frameworks */,
 				6D4BB4C92869A3D200F4C115 /* Resources */,
-				E93254C059F444DC28E12465 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = CustomAlarm;
+			packageProductDependencies = (
+				6D978B2D288D19A4007D13B2 /* YouTubePlayerKit */,
+			);
 			productName = CustomAlarm;
 			productReference = 6D4BB4CB2869A3D200F4C115 /* CustomAlarm.app */;
 			productType = "com.apple.product-type.application";
@@ -182,6 +166,9 @@
 				Base,
 			);
 			mainGroup = 6D4BB4C22869A3D200F4C115;
+			packageReferences = (
+				6D978B2C288D19A4007D13B2 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */,
+			);
 			productRefGroup = 6D4BB4CC2869A3D200F4C115 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -203,48 +190,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		2A0449EB85A9B106542B19A0 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-CustomAlarm-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E93254C059F444DC28E12465 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CustomAlarm/Pods-CustomAlarm-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CustomAlarm/Pods-CustomAlarm-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CustomAlarm/Pods-CustomAlarm-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		6D4BB4C72869A3D200F4C115 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -260,12 +205,14 @@
 				6D4BB4D82869A3D400F4C115 /* Persistence.swift in Sources */,
 				6D4BB4D12869A3D200F4C115 /* ContentView.swift in Sources */,
 				6D3AE2362879B0C6005ECED6 /* ColorTagSettingView.swift in Sources */,
+				6D978B30288D2D77007D13B2 /* ForgroungOnOff.swift in Sources */,
 				6D4BB50F286D882A00F4C115 /* DataModel.swift in Sources */,
 				6D3AE23B287FF03D005ECED6 /* NotificationLocally.swift in Sources */,
 				6D4BB4E82869B9CC00F4C115 /* SettingView.swift in Sources */,
 				6D4BB4CF2869A3D200F4C115 /* CustomAlarmApp.swift in Sources */,
 				6D4BB4EA2869BE6700F4C115 /* DataAccess.swift in Sources */,
 				6D4BB4E52869AE7900F4C115 /* AlarmData+CoreDataClass.swift in Sources */,
+				6D978B29288CFA4B007D13B2 /* YoutubePlayView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,7 +335,6 @@
 		};
 		6D4BB4DF2869A3D400F4C115 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B3A323BECFAB7EC212414890 /* Pods-CustomAlarm.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -420,7 +366,6 @@
 		};
 		6D4BB4E02869A3D400F4C115 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FA90C8E0BA87E9FD444A2BA9 /* Pods-CustomAlarm.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -472,6 +417,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6D978B2C288D19A4007D13B2 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SvenTiigi/YouTubePlayerKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6D978B2D288D19A4007D13B2 /* YouTubePlayerKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6D978B2C288D19A4007D13B2 /* XCRemoteSwiftPackageReference "YouTubePlayerKit" */;
+			productName = YouTubePlayerKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		6D4BB4D92869A3D400F4C115 /* CustomAlarm.xcdatamodeld */ = {

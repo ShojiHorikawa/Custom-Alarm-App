@@ -48,11 +48,19 @@ class NotificationModel: ObservableObject {
 
     func makeNotification(time: Date, dayWeek: [String],notificationIdentifier: String,label: String){
         
+        // timeはletなので、更新できるようにvarを使ったsetTimeを初期化
+        var setTime = time
+        
+        // timeが現在時刻(〇時〇分)と同じ、またはそれ以前の場合は1日分の時間を足す
+        if(setTime.timeIntervalSinceNow <= 0){
+            setTime = Calendar.current.date(byAdding: .day, value: 1, to: setTime)!
+        }
+        
         var durringTime: Double = 8.0
         //日時
         if(dayWeek == []){
             // 曜日指定がない時
-            durringTime = time.timeIntervalSinceNow//目標の時間との時間差(秒)
+            durringTime = setTime.timeIntervalSinceNow//目標の時間との時間差(秒)
         } else {
             
             
@@ -63,12 +71,10 @@ class NotificationModel: ObservableObject {
             var num = 0 // Loop用変数(指定した曜日が何日後か調べる)
             while durringTime == 8.0{
                 if(dayWeek.contains(weekArray[(weekDay+num) % 7].rawValue)){
-                    durringTime = Double(num * 24 * 60 * 60) + time.timeIntervalSinceNow
+                    durringTime = Double(num * 24 * 60 * 60) + setTime.timeIntervalSinceNow
                 }
                 num += 1
             }
-            
-            
         }
         
         let notificationDate = Date().addingTimeInterval(durringTime)//目標の時間との時間差(秒)
@@ -81,7 +87,7 @@ class NotificationModel: ObservableObject {
         let content = UNMutableNotificationContent()
         content.title = "CustomAlarm"
         content.body = label
-        content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "Cave2.mp3"))
+        content.sound = UNNotificationSound.default
 
         //リクエスト作成
         let request = UNNotificationRequest(identifier: notificationIdentifier, content: content, trigger: trigger)

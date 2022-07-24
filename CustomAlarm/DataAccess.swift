@@ -7,6 +7,8 @@
 // dayOfWeekとtagColor用の列挙体
 
 import Foundation
+import SwiftUI
+
 struct DataAccess {
     
     
@@ -36,3 +38,4 @@ let weekArray: [DataAccess.DayOfWeek] = DataAccess.DayOfWeek.allCases
 
 // ForEach用の列挙体を全て格納した配列
 let colorArray: [DataAccess.TagColor] = DataAccess.TagColor.allCases
+

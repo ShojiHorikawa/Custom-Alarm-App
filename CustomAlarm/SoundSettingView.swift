@@ -17,16 +17,28 @@ struct SoundSettingView: View {
     @Binding var soundName: String
     @Binding var soundTime: Int
     @Binding var soundTimeOnOff: Bool
+    @Binding var soundReturnTime: Int
+    
     
     // 開始時間(タイムスタンプ)入力用変数
     @State var hourInt = 0
     @State var minInt = 0
     @State var secInt = 0
     
+    // リピート変数(onApperの時にsoundReturnTimeが0かどうかで変更)
+    @State var RepeatBool = false
+    // リピート時間入力用変数
+    @State var hourIntRe = 0
+    @State var minIntRe = 0
+    @State var secIntRe = 0
+    
     // picker用bool変数
     @State var showPickerHour: Bool = false
     @State var showPickerMin: Bool = false
     @State var showPickerSec: Bool = false
+    
+    // タイムスタンプかリピートかpickerを区別するbool変数
+    @State var whichPicker: Bool = true
     
     var body: some View {
         //        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
@@ -232,6 +244,7 @@ struct SoundSettingView: View {
                                                 // hour用 ZStack
                                                 ZStack{
                                                     Button(action: {
+                                                        self.whichPicker = true
                                                         // picker表示切り替え
                                                         self.showPickerHour.toggle()
                                                         self.showPickerMin = false
@@ -256,6 +269,7 @@ struct SoundSettingView: View {
                                                 // min用 ZStack
                                                 ZStack{
                                                     Button(action: {
+                                                        self.whichPicker = true
                                                         // picker表示切り替え
                                                         self.showPickerMin.toggle()
                                                         self.showPickerHour = false
@@ -280,6 +294,7 @@ struct SoundSettingView: View {
                                                 // sec用 ZStack
                                                 ZStack{
                                                     Button(action: {
+                                                        self.whichPicker = true
                                                         // picker表示切り替え
                                                         self.showPickerSec.toggle()
                                                         self.showPickerHour = false
@@ -327,11 +342,147 @@ struct SoundSettingView: View {
                                         }// 時間入力 VStackここまで
                                         .padding(.top)
                                     }// タイムスタンプ時間設定用HStackここまで
+                                    
+                                    // --------------------------------------------
+                                    // repeatTime(リピート再生時間) Button HStack
+                                    HStack{
+                                        // タイムスタンプButton
+                                        Button(action: {
+                                            self.RepeatBool.toggle()
+                                            
+                                            self.showPickerHour = false
+                                            self.showPickerMin = false
+                                            self.showPickerSec = false
+                                            if(!RepeatBool){
+                                                hourIntRe = 0
+                                                minIntRe = 0
+                                                secIntRe = 0
+                                            }
+                                        }){
+                                            if(RepeatBool){
+                                                Image(systemName: "circle.inset.filled")
+                                                    .foregroundColor(Color.green)
+                                                    .font(.title2)
+                                                
+                                            } else {
+                                                Image(systemName: "circle")
+                                                    .foregroundColor(Color.white)
+                                                    .font(.title2)
+                                            }
+                                            
+                                        }
+                                        //                        .padding(.trailing)
+                                        .brightness(soundOnOff ? 0.0 : -0.5)
+                                        .disabled(!soundOnOff)
+                                        
+                                        Text("リピート再生")
+                                            .bold()
+                                            .font(.headline)
+                                            .brightness(soundOnOff && soundTimeOnOff ? 0.0 : -0.5)
+                                    }// repeatTime(リピート再生時間) Button HStackここまで
+                                    .padding(.bottom)
+                                    // リピート再生時間設定用HStack
+                                    HStack{
+                                        // "サウンドの設定"に横を揃えるためのクッション用
+                                        Image(systemName: "circle.inset.filled")
+                                            .foregroundColor(Color.clear)
+                                            .font(.title2)
+                                        
+                                        // 時間入力 VStack
+                                        VStack(alignment: .leading){
+                                            Text("再生時間")
+                                                .bold()
+                                                .font(.headline)
+                                                .brightness(soundOnOff && RepeatBool ? 0.0 : -0.5)
+                                            
+                                            // 入力列 HStack
+                                            HStack{
+                                                // hour用 ZStack
+                                                ZStack{
+                                                    Button(action: {
+                                                        self.whichPicker = false
+                                                        // picker表示切り替え
+                                                        self.showPickerHour.toggle()
+                                                        self.showPickerMin = false
+                                                        self.showPickerSec = false
+                                                    }){
+                                                        RoundedRectangle(cornerRadius: 10)
+                                                            .fill(Color("TextFieldColor"))
+                                                            .frame(height: 35)
+                                                            .padding(.trailing)
+                                                    }
+                                                    .disabled(!soundOnOff || !RepeatBool)
+                                                    .brightness(soundOnOff && RepeatBool ? 0.0 : -0.5)
+                                                    
+                                                    Text("\(hourIntRe)")
+                                                        .padding(.trailing)
+                                                        .brightness(soundOnOff && RepeatBool ? 0.0 : -0.5)
+                                                } // hour用 ZStackここまで
+                                                
+                                                Text("時")
+                                                    .brightness(soundOnOff && RepeatBool ? 0.0 : -0.5)
+                                                
+                                                // min用 ZStack
+                                                ZStack{
+                                                    Button(action: {
+                                                        self.whichPicker = false
+                                                        // picker表示切り替え
+                                                        self.showPickerMin.toggle()
+                                                        self.showPickerHour = false
+                                                        self.showPickerSec = false
+                                                    }){
+                                                        RoundedRectangle(cornerRadius: 10)
+                                                            .fill(Color("TextFieldColor"))
+                                                            .frame(height: 35)
+                                                            .padding(.trailing)
+                                                    }
+                                                    .disabled(!soundOnOff || !RepeatBool)
+                                                    .brightness(soundOnOff && RepeatBool ? 0.0 : -0.5)
+                                                    
+                                                    Text("\(minIntRe)")
+                                                        .padding(.trailing)
+                                                        .brightness(soundOnOff && RepeatBool ? 0.0 : -0.5)
+                                                } // min用 ZStackここまで
+                                                
+                                                Text("分")
+                                                    .brightness(soundOnOff && RepeatBool ? 0.0 : -0.5)
+                                                
+                                                // sec用 ZStack
+                                                ZStack{
+                                                    Button(action: {
+                                                        self.whichPicker = false
+                                                        // picker表示切り替え
+                                                        self.showPickerSec.toggle()
+                                                        self.showPickerHour = false
+                                                        self.showPickerMin = false
+                                                    }){
+                                                        RoundedRectangle(cornerRadius: 10)
+                                                            .fill(Color("TextFieldColor"))
+                                                            .frame(height: 35)
+                                                            .padding(.trailing)
+                                                    }
+                                                    .disabled(!soundOnOff || !RepeatBool)
+                                                    .brightness(soundOnOff && RepeatBool ? 0.0 : -0.5)
+                                                    
+                                                    Text("\(secIntRe)")
+                                                        .padding(.trailing)
+                                                        .brightness(soundOnOff && RepeatBool ? 0.0 : -0.5)
+                                                } // sec用 ZStackここまで
+                                                
+                                                Text("秒")
+                                                    .brightness(soundOnOff && RepeatBool ? 0.0 : -0.5)
+                                            } // 入力列 HStackここまで
+                                            .padding(.trailing)
+                                            Spacer()
+                                            Spacer()
+                                        }// 時間入力 VStackここまで
+                                    }// リピート再生時間設定用HStackここまで
                                 } // URL・Name設定VStackここまで
                             } // URL・Name設定 全体HStackここまで
                             Spacer().frame(height: UIScreen.main.bounds.size.height / 3)
                                 .id("point")
                         } // ScrollViewここまで
+                        // ホイール型キーボードが表示されたときにスクロールする
                         .onChange(of: showPickerHour || showPickerMin || showPickerSec){ _ in
                             withAnimation (.easeInOut){
                                 if(showPickerHour || showPickerMin || showPickerSec){
@@ -350,21 +501,21 @@ struct SoundSettingView: View {
                     Spacer()
                     
                     if(showPickerHour){
-                        SelectPicker(time: $hourInt, showPicker: $showPickerHour, maxTime: 24, prevPicker: Binding.constant(true),nextPicker: $showPickerMin)
+                        SelectPicker(time: whichPicker ? $hourInt : $hourIntRe, showPicker: $showPickerHour, maxTime: 24, prevPicker: Binding.constant(true),nextPicker: $showPickerMin)
                             .offset(y: self.showPickerHour ? geometry.safeAreaInsets.bottom : SelectPicker.viewHeight + geometry.safeAreaInsets.bottom)
                             .frame(height: SelectPicker.viewHeight)
                             .ignoresSafeArea()
                         //                            .transition(.move(edge: .bottom))
                         //                            .animation(.linear(duration: 3),value: false)
                     } else if(showPickerMin){
-                        SelectPicker(time: $minInt, showPicker: $showPickerMin, maxTime: 60, prevPicker: $showPickerHour, nextPicker: $showPickerSec)
+                        SelectPicker(time: whichPicker ? $minInt : $minIntRe, showPicker: $showPickerMin, maxTime: 60, prevPicker: $showPickerHour, nextPicker: $showPickerSec)
                             .offset(y: self.showPickerMin ? geometry.safeAreaInsets.bottom : SelectPicker.viewHeight + geometry.safeAreaInsets.bottom)
                             .frame(height: SelectPicker.viewHeight)
                             .ignoresSafeArea()
                             .transition(.move(edge: .bottom))
                             .animation(.linear(duration: 3),value: false)
                     } else if(showPickerSec){
-                        SelectPicker(time: $secInt, showPicker: $showPickerSec, maxTime: 60, prevPicker: $showPickerMin, nextPicker: Binding.constant(true))
+                        SelectPicker(time: whichPicker ? $secInt : $secIntRe, showPicker: $showPickerSec, maxTime: 60, prevPicker: $showPickerMin, nextPicker: Binding.constant(true))
                             .offset(y: self.showPickerSec ? geometry.safeAreaInsets.bottom : SelectPicker.viewHeight + geometry.safeAreaInsets.bottom)
                             .frame(height: SelectPicker.viewHeight)
                             .ignoresSafeArea()
@@ -380,9 +531,18 @@ struct SoundSettingView: View {
             secInt = soundTime % 60
             minInt = soundTime / 60 % 60
             hourInt = soundTime / 3600
+            
+            if(soundReturnTime != 0){
+                RepeatBool = true
+            }
+            secIntRe = soundReturnTime % 60
+            minIntRe = soundReturnTime / 60 % 60
+            hourIntRe = soundReturnTime / 3600
         }
         .onDisappear{
             soundTime = hourInt * 3600 + minInt * 60 + secInt
+            
+            soundReturnTime = hourIntRe * 3600 + minIntRe * 60 + secIntRe
         }
     }
 }
@@ -466,6 +626,6 @@ struct SelectPicker: View {
 
 struct SoundSettingView_Previews: PreviewProvider {
     static var previews: some View {
-        SoundSettingView(soundOnOff: Binding.constant(true), soundURL:Binding.constant(""), soundName: Binding.constant(""),soundTime: Binding.constant(0),soundTimeOnOff: Binding.constant(true))
+        SoundSettingView(soundOnOff: Binding.constant(true), soundURL:Binding.constant(""), soundName: Binding.constant(""),soundTime: Binding.constant(0),soundTimeOnOff: Binding.constant(true),soundReturnTime: Binding.constant(0))
     }
 }

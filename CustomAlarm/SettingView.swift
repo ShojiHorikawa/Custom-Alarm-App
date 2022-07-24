@@ -35,6 +35,9 @@ struct SettingView: View {
                     HStack{
                         // キャンセルボタンを押したらアラーム設定のデータを更新しない
                         Button("キャンセル") {
+                            if(searchIndex() >= 0){
+                                items[searchIndex()].onOff = dataModel.onOff
+                            }
                             dataModel.isNewData = false
                             didTapDismissButton()
                         }
@@ -58,14 +61,15 @@ struct SettingView: View {
                             dataModel.updateItem = AlarmData(context: viewContext)
                             //                            dataModel.rewrite(dataModel: dataModel,context: viewContext)
                             
+                            // 通知の予約
                             self.notificationModel.setNotification(time: dataModel.alarmTime, dayWeek: dataModel.dayOfWeekRepeat, uuid: dataModel.uuid, label: dataModel.label)
                             
                             // 他の設定の年月日更新(並び順を崩さないため)
                             for item in items {
                                 item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
                             }
-                            
                             dataModel.writeData(context: viewContext)
+                            
                             
                             didTapDismissButton()
                         }
@@ -126,7 +130,7 @@ struct SettingView: View {
                     
                     
                     // 【移動】SoundSetting.swiftへ プッシュ遷移
-                    NavigationLink(destination: SoundSettingView(soundOnOff: $dataModel.soundOnOff, soundURL: $dataModel.soundURL, soundName: $dataModel.soundName,soundTime: $dataModel.soundTime, soundTimeOnOff: $dataModel.soundTimeOnOff)){
+                    NavigationLink(destination: SoundSettingView(soundOnOff: $dataModel.soundOnOff, soundURL: $dataModel.soundURL, soundName: $dataModel.soundName,soundTime: $dataModel.soundTime, soundTimeOnOff: $dataModel.soundTimeOnOff,soundReturnTime: $dataModel.soundReturnTime)){
                         Text("サウンド")
                             .foregroundColor(Color.white)
                         
