@@ -29,7 +29,7 @@ struct AlarmRow: View {
     @State var timer: Timer!
     
     // Youtube再生用のモーダル遷移起動変数
-//    @State var isModalSubviewYT = false
+    @State var isModalSubviewYT = false
     
     @Binding var youTubePlayer : YouTubePlayer
     
@@ -102,16 +102,19 @@ struct AlarmRow: View {
                         // 通知予約破棄
                         self.notificationModel.removeNotification(notificationIdentifier: Item.wrappedUuid)
                         if(Item.soundOnOff){
-                            youTubePlayer = YouTubePlayer(
-                                source: .url(Item.wrappedSoundURL),
-                                configuration: .init(
-                                    isUserInteractionEnabled: false,
-                                    autoPlay: true,
-                                    loopEnabled: true
-                                )
-                                )
+                            print(Item.wrappedAlarmTime.timeIntervalSinceNow)
+                            if(Item.wrappedAlarmTime.timeIntervalSinceNow <= 0.05 && Item.wrappedAlarmTime.timeIntervalSinceNow >= -0.03){
+//                            youTubePlayer = YouTubePlayer(
+//                                source: .url(Item.wrappedSoundURL),
+//                                configuration: .init(
+//                                    isUserInteractionEnabled: false,
+//                                    autoPlay: true,
+//                                    loopEnabled: true
+//                                )
+//                                )
                             // Youtube再生画面起動
-//                            self.isModalSubviewYT = true
+                            self.isModalSubviewYT = true
+                            }
                         }
                         
                         timer?.invalidate()
@@ -135,9 +138,9 @@ struct AlarmRow: View {
                     }
                     try! viewContext.save()
                 }// Toggle ここまで
-//            .sheet(isPresented: $isModalSubviewYT) {
-//                YoutubePlayView(youTubePlayer: youTubePlayer, IntervalTime: Item.soundReturnTime, seekTime: Item.soundTime)
-//            } // sheetここまで
+            .sheet(isPresented: $isModalSubviewYT) {
+                YoutubePlayView(url: Item.wrappedSoundURL, IntervalTime: Item.soundReturnTime, seekTime: Item.soundTime)
+            } // sheetここまで
             
             ForEach(colorArray,id: \.self){ color in
                 if(Item.wrappedTagColor == color.rawValue && Item.wrappedTagColor != DataAccess.TagColor.clear.rawValue){

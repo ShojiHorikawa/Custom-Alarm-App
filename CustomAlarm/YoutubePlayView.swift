@@ -12,15 +12,16 @@ import YouTubePlayerKit
 struct YoutubePlayView: View {
     //モーダル表示を閉じるdismiss()を使うための変数
     @Environment(\.presentationMode) var presentationModeYT
-    //    let youTubePlayer = YouTubePlayer(
-    //        source: .url("https://youtu.be/lDay8RVfhv4?t=2542"),
-    //        configuration : .init(
-    //            isUserInteractionEnabled: false,
-    //            autoPlay: false,
-    //            loopEnabled: true
-    //        )
-    //    )
-    let youTubePlayer : YouTubePlayer
+        let youTubePlayer = YouTubePlayer(
+            source: .url(""),
+            configuration: .init(
+                isUserInteractionEnabled: false,
+                autoPlay: true,
+                loopEnabled: true
+            )
+        )
+//    let youTubePlayer : YouTubePlayer
+    let url: String
     let IntervalTime: Int16
     let seekTime: Int16
     
@@ -51,6 +52,12 @@ struct YoutubePlayView: View {
             }
         }
         .onAppear{
+//            youTubePlayer.source = youTubePlayer.source
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+//                youTubePlayer.load(source: youTubePlayer.source)
+//                youTubePlayer.play()
+//            }
+            youTubePlayer.source = .url(url)
             youTubePlayer.seek(to: Double(seekTime), allowSeekAhead: true)
             if(IntervalTime != 0) {
                 _ = Timer.scheduledTimer(
