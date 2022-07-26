@@ -39,8 +39,10 @@ struct ContentView: View {
     @State var viewTagColor: DataAccess.TagColor = DataAccess.TagColor.clear
     
     @State var youTubePlayer: YouTubePlayer = ""
-    
-    @State var timer: Timer!
+    // アラームが鳴るとアラーム設定がOFFになる
+//    @State var timer: Timer!
+    // 通知設定用変数
+    @EnvironmentObject var notificationModel:NotificationModel
     
     var body: some View {
         NavigationView{
@@ -92,8 +94,11 @@ struct ContentView: View {
                     ForEach(items) {item in
                         if(item.wrappedTagColor == viewTagColor.rawValue || viewTagColor == DataAccess.TagColor.clear) {
                             Button(action: {
+                                // SettingViewへ渡すdataModelを作成
                                 dataModel.editItem(item: item)
                                 self.isModalSubview.toggle()
+                                
+                                item.onOff = false
                                 
                                 viewTagColor = DataAccess.TagColor.clear
                                 
@@ -111,60 +116,24 @@ struct ContentView: View {
                                             // OnOffの更新
                                             for item in items{
                                                 if(item.onOff){
-                                                    // アラームの設定をOFFにする
-                                                    if(item.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.dayOfWeekRepeat == []){
-                                                        item.onOff = false
-                                                    }
+                                                    // アラームの設定をOFFにする　明日の朝起きるための設定もOFFになるのでボツ
+//                                                    if(item.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.dayOfWeekRepeat == []){
+//                                                        item.onOff = false
+//                                                    }
                                                     // アラームの設定 年月日を更新
                                                     item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
                                                 }
                                             }
                                             try! viewContext.save()
                                             
-                                            // Timerの実態があるときは停止させる
-                                            self.timer?.invalidate()
-                                            
-                                            // 設定時刻までの時間計算
-                                            var setTime = item.wrappedAlarmTime
-                                            // timeが現在時刻(〇時〇分)と同じ、またはそれ以前の場合は1日分の時間を足す
-                                            if(setTime.timeIntervalSinceNow <= 0){
-                                                setTime = Calendar.current.date(byAdding: .day, value: 1, to: setTime)!
-                                            }
-                                            var durringTime: Double = 0.0
-                                            if(item.dayOfWeekRepeat == []){ //日時
-                                                // 曜日指定がない時
-                                                durringTime = setTime.timeIntervalSinceNow//目標の時間との時間差(秒)
-                                            } else {
-                                                // 今日の曜日を取得 (日曜日=0,月曜日=1,....土曜日=6 を返す)
-                                                let weekDay = Calendar.current.component(.weekday, from: Date()) % 7
-                                                let weekArray: [DataAccess.DayOfWeek] = DataAccess.DayOfWeek.allCases // 検索用 曜日配列
-                                                
-                                                var num = 0 // Loop用変数(指定した曜日が何日後か調べる)
-                                                while durringTime == 0.0{
-                                                    if(item.dayOfWeekRepeat.contains(weekArray[(weekDay+num) % 7].rawValue)){
-                                                        durringTime = Double(num * 24 * 60 * 60) + setTime.timeIntervalSinceNow
-                                                    }
-                                                    num += 1
-                                                }
-                                            }
-                                            
-                                            
-                                            // 既存設定用indexサーチ関数 (uuid検索)
-                                            var returnIndex: Int?
-                                            for index in 0 ..< items.count {
-                                                if(items[index].wrappedUuid == item.wrappedUuid){
-                                                    returnIndex = index
-                                                }
-                                            }
-                                            self.timer = Timer.scheduledTimer(withTimeInterval: durringTime, repeats: false){ _ in
-                                                if(returnIndex != nil){
-                                                    self.items[returnIndex!].onOff = false
-                                                }
+                                            if(dataModel.isNewData){
+                                                item.onOff = true
+                                                dataModel.isNewData.toggle()
                                             }
                                         } // onDisapperここまで
                                         .onAppear{
-                                            timer?.invalidate()
-                                            timer = nil
+//                                            timer?.invalidate()
+//                                            timer = nil
                                         }
                                 }
                             } // sheetここまで
@@ -199,7 +168,6 @@ struct ContentView: View {
                     // 「＋」ボタン
                     ToolbarItem {
                         Button(action: {
-                            
                             // 「完了」ボタンが表示されている場合、「編集」ボタンへ戻す
                             if editMode?.wrappedValue.isEditing == true {
                                 editMode?.wrappedValue = .inactive
@@ -224,6 +192,27 @@ struct ContentView: View {
         
         .onChange(of: scenePhase) { phase in
             if phase == .inactive {
+                for item in items{
+                    if(item.onOff){
+/* UserDefaultsでAlarmRowのtoggleスイッチやアラーム設定の変更・新規作成をした時間〜NowTimeの間のアラーム設定をOFFに変える
+                        // アラームの設定をOFFにする
+                        if(item.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.dayOfWeekRepeat == []){
+                            item.onOff = false
+                        }
+*/
+                    }
+                    // ↓の処理を入れるためにわざとifを分断
+                    // アラームの設定 年月日を更新
+                    item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
+                    
+                    if(item.onOff){
+                        // 曜日繰り返しがある場合、通知を更新or予約する
+                        if(item.dayOfWeekRepeat != []){
+                            // 通知予約・更新
+                            self.notificationModel.setNotification(time: item.wrappedAlarmTime, dayWeek: item.dayOfWeekRepeat, uuid: item.wrappedUuid, label: item.wrappedLabel)
+                        }
+                    }
+                }
                 // itemsのデータ更新
                 try! viewContext.save()
             }
@@ -247,12 +236,12 @@ struct ContentView: View {
     }
     
     // 既存設定用indexサーチ関数
-    private func searchIndex(objectID: NSManagedObjectID) -> Int {
+    private func searchIndex(uuid: String) -> Int {
         // itemsから任意のitemを見つけるためのid
         var returnIndex: Int = 0
         for index in 0 ..< items.count {
             if(items[index].alarmTime != nil) {
-                if(items[index].objectID == objectID){
+                if(items[index].wrappedUuid == uuid){
                     returnIndex = index
                 }
             }

@@ -53,7 +53,7 @@ struct SettingView: View {
                                 viewContext.delete(items[searchIndex()])
                             }
                             dataModel.alarmTime = secondLoss(willTime: dataModel.alarmTime) // 秒数以下切り捨て
-                            dataModel.onOff = true
+//                            dataModel.onOff = true
                             
                             // 年月日の更新
                             dataModel.alarmTime = updateTime(didAlarmTime: dataModel.alarmTime)
@@ -64,14 +64,15 @@ struct SettingView: View {
                             // 通知の予約
                             self.notificationModel.setNotification(time: dataModel.alarmTime, dayWeek: dataModel.dayOfWeekRepeat, uuid: dataModel.uuid, label: dataModel.label)
                             
-                            // 他の設定の年月日更新(並び順を崩さないため)
-                            for item in items {
-                                item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
-                            }
+                            // disApperでこの処理を行う
+                            dataModel.onOff = false
                             dataModel.writeData(context: viewContext)
+                            dataModel.isNewData.toggle()
                             
                             
                             didTapDismissButton()
+                            
+                            
                         }
                         // アラーム専用の橙色に設定
                         .foregroundColor(Color("DarkOrange"))
@@ -156,7 +157,7 @@ struct SettingView: View {
                         }
                     }
                     
-                    
+/*2022.7.26 処理の問題で一時的にストップ
                     HStack{
                         // スヌーズのON/OFF切り替え
                         Text("スヌーズ")
@@ -165,7 +166,7 @@ struct SettingView: View {
                             
                         }
                     }
-                    
+*/
                     // 【移動】IdentifyTagSetting.swiftへ プッシュ遷移
                     NavigationLink(destination: ColorTagSettingView(tagColor: $dataModel.tagColor)){
                         Text("タグ")

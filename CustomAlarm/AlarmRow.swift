@@ -25,6 +25,9 @@ struct AlarmRow: View {
     @ObservedObject var dataModel: DataModel
     @ObservedObject var Item: AlarmData
     
+    // アラームが鳴るとアラーム設定がOFFになるカウントダウン処理変数
+    @State var timer: Timer!
+    
     // Youtube再生用のモーダル遷移起動変数
 //    @State var isModalSubviewYT = false
     
@@ -79,16 +82,22 @@ struct AlarmRow: View {
                         
                         // itemsを更新する方法を模索中
                         
-//                        // 最も時間の早いアラームのOFF予約
-                        var shortTime = items[0]
-                        for item in items{
-                            if(shortTime.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.onOff){
-                                shortTime = item
+                        // 最も時間の早いONのアラーム設定(shortTime)を探す
+                        let shortTime:AlarmData? = searchShortTime(items: items)
+                       
+                        // shortTimeが存在する時、そのアラームのOFF予約をする
+                        if(shortTime != nil){
+//                            startCountUp(item: shortTime!)
+                            // Timerの実態があるときは停止させる
+                            self.timer?.invalidate()
+                            
+                            // NotificationLocally.swiftに書かれている処理
+                            let countDown = startCountUp(time: shortTime!.wrappedAlarmTime, dayWeek: shortTime!.dayOfWeekRepeat)
+                            self.timer = Timer.scheduledTimer(withTimeInterval: countDown, repeats: false){ _ in
+                                Item.onOff = false
                             }
                         }
-                        if(shortTime == Item){
-                            startCountUp()
-                        }
+                        
                     } else {
                         // 通知予約破棄
                         self.notificationModel.removeNotification(notificationIdentifier: Item.wrappedUuid)
@@ -104,14 +113,23 @@ struct AlarmRow: View {
                             // Youtube再生画面起動
 //                            self.isModalSubviewYT = true
                         }
-                        var shortTime = items[0]
-                        for item in items{
-                            if(shortTime.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.onOff){
-                                shortTime = item
+                        
+                        timer?.invalidate()
+                        timer = nil
+                        // 最も時間の早いONのアラーム設定(shortTime)を探す
+                        let shortTime:AlarmData? = searchShortTime(items: items)
+                       
+                        // shortTimeが存在する時、そのアラームのOFF予約をする
+                        if(shortTime != nil){
+//                            startCountUp(item: shortTime!)
+                            // Timerの実態があるときは停止させる
+                            self.timer?.invalidate()
+                            
+                            // NotificationLocally.swiftに書かれている処理
+                            let countDown = startCountUp(time: shortTime!.wrappedAlarmTime, dayWeek: shortTime!.dayOfWeekRepeat)
+                            self.timer = Timer.scheduledTimer(withTimeInterval: countDown, repeats: false){ _ in
+                                Item.onOff = false
                             }
-                        }
-                        if(shortTime.onOff || shortTime == Item){
-                            stop()
                         }
                         
                     }
@@ -133,51 +151,6 @@ struct AlarmRow: View {
         } // ZStackここまで
     } // body ここまで
     
-    // アラームが鳴るとアラーム設定がOFFになる
-    @State var timer: Timer!
-    func startCountUp(){
-        // 設定時刻までの時間計算
-        var setTime = Item.wrappedAlarmTime
-        // timeが現在時刻(〇時〇分)と同じ、またはそれ以前の場合は1日分の時間を足す
-        if(setTime.timeIntervalSinceNow <= 0){
-            setTime = Calendar.current.date(byAdding: .day, value: 1, to: setTime)!
-        }
-        var durringTime: Double = 0.0
-        if(Item.dayOfWeekRepeat == []){ //日時
-            // 曜日指定がない時
-            durringTime = setTime.timeIntervalSinceNow//目標の時間との時間差(秒)
-        } else {
-            // 今日の曜日を取得 (日曜日=0,月曜日=1,....土曜日=6 を返す)
-            let weekDay = Calendar.current.component(.weekday, from: Date()) % 7
-            let weekArray: [DataAccess.DayOfWeek] = DataAccess.DayOfWeek.allCases // 検索用 曜日配列
-            
-            var num = 0 // Loop用変数(指定した曜日が何日後か調べる)
-            while durringTime == 0.0{
-                if(Item.dayOfWeekRepeat.contains(weekArray[(weekDay+num) % 7].rawValue)){
-                    durringTime = Double(num * 24 * 60 * 60) + setTime.timeIntervalSinceNow
-                }
-                num += 1
-            }
-        }
-
-        // Timerの実態があるときは停止させる
-        self.timer?.invalidate()
-        
-        // 既存設定用indexサーチ関数 (uuid検索)
-        var returnIndex: Int?
-        for index in 0 ..< items.count {
-            if(items[index].uuid == Item.uuid){
-                returnIndex = index
-            }
-        }
-        
-        self.timer = Timer.scheduledTimer(withTimeInterval: durringTime, repeats: false){ _ in
-            if(Item.wrappedAlarmTime.timeIntervalSinceNow > 0 && returnIndex != nil){
-                self.items[returnIndex!].onOff = false
-            }
-        }
-    }
-
     private func stop(){
         timer?.invalidate()
         timer = nil
@@ -206,6 +179,74 @@ func timeText(dt: Date, AmPm:Bool) -> String{
     return formatter.string(from: dt)
     
     
+}
+
+// 最も早いONのアラーム時刻設定を検索
+func searchShortTime(items: FetchedResults<AlarmData>) -> AlarmData?{
+    let shortTime:AlarmData? = nil
+    var shortTimeIndex: Int?
+    // 今日の曜日を取得 (日曜日=0,月曜日=1,....土曜日=6 を返す)
+    let weekDay = Calendar.current.component(.weekday, from: Date()) % 7
+    // 検索用 曜日配列
+    let weekArray: [DataAccess.DayOfWeek] = DataAccess.DayOfWeek.allCases
+    // それぞれのitems.dayOfRepeartに含まれる曜日を数字に変換
+    var itemsDayWeek:[[Int]] = []
+    for i in 0 ..< items.count{
+        itemsDayWeek.append([])
+        for j in 0 ..< weekArray.count{
+            if(items[i].dayOfWeekRepeat.contains(weekArray[j].rawValue)){
+                itemsDayWeek[i].append(j)
+            }
+        }
+    }
+//        print(itemsDayWeek) //確認用
+    
+    // 日付を跨がないON設定のshortTimeIndex検索 (設定時間が現在時刻より遅い場合、その日の曜日も含む)
+    for i in 0 ..< items.count{
+        if(items[i].onOff && items[i].wrappedAlarmTime.timeIntervalSinceNow >= 0){
+            if(itemsDayWeek[i].contains(weekDay) || itemsDayWeek == []){
+                if(shortTimeIndex == nil){
+                    shortTimeIndex = i
+                } else if(items[shortTimeIndex!].wrappedAlarmTime.timeIntervalSinceNow > items[i].wrappedAlarmTime.timeIntervalSinceNow) {
+                    shortTimeIndex = i
+                }
+            }
+        }
+    }
+    
+//    // もし、現在時刻よりも前の場合は初期化(最も時間の早いアラーム設定を探すため) items[i].wrappedAlarmTime.timeIntervalSinceNow >= 0条件を追加したので不要
+//    if(shortTime != nil && shortTime!.wrappedAlarmTime.timeIntervalSinceNow < 0){
+//        shortTime = nil
+//    }
+    
+    // 上の検索ループで見つからなかった場合、現在時刻に最も近い設定を探す
+    if(shortTimeIndex == nil){
+        for after in 1 ..< weekArray.count + 1{
+            if(shortTimeIndex == nil){
+            for i in 0 ..< items.count{
+//                if(shortTimeIndex == nil){
+                    if(items[i].onOff){
+                        if(itemsDayWeek[i] == [] || itemsDayWeek[i].contains((weekDay+after) % 7)){
+                            if(shortTimeIndex == nil){
+                                shortTimeIndex = i
+                            } else if(items[shortTimeIndex!].wrappedAlarmTime.timeIntervalSinceNow > items[i].wrappedAlarmTime.timeIntervalSinceNow){
+                                shortTimeIndex = i
+                            }
+                        }
+                    }
+//                }
+            }
+            }
+        }
+    }
+//    if(shortTime != nil){
+//        print(shortTime!)
+//    }
+    if(shortTimeIndex != nil) {
+        return items[shortTimeIndex!]
+    } else {
+        return shortTime
+    }
 }
 
 //struct AlarmRow_Previews: PreviewProvider {

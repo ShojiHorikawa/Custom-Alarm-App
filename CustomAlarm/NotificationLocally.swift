@@ -48,35 +48,8 @@ class NotificationModel: ObservableObject {
 
     func makeNotification(time: Date, dayWeek: [String],notificationIdentifier: String,label: String){
         
-        // timeはletなので、更新できるようにvarを使ったsetTimeを初期化
-        var setTime = time
-        
-        // timeが現在時刻(〇時〇分)と同じ、またはそれ以前の場合は1日分の時間を足す
-        if(setTime.timeIntervalSinceNow <= 0){
-            setTime = Calendar.current.date(byAdding: .day, value: 1, to: setTime)!
-        }
-        
-        var durringTime: Double = 8.0
-        //日時
-        if(dayWeek == []){
-            // 曜日指定がない時
-            durringTime = setTime.timeIntervalSinceNow//目標の時間との時間差(秒)
-        } else {
-            
-            
-            // 今日の曜日を取得 (日曜日=0,月曜日=1,....土曜日=6 を返す)
-            let weekDay = Calendar.current.component(.weekday, from: Date()) % 7
-            let weekArray: [DataAccess.DayOfWeek] = DataAccess.DayOfWeek.allCases // 検索用 曜日配列
-            
-            var num = 0 // Loop用変数(指定した曜日が何日後か調べる)
-            while durringTime == 8.0{
-                if(dayWeek.contains(weekArray[(weekDay+num) % 7].rawValue)){
-                    durringTime = Double(num * 24 * 60 * 60) + setTime.timeIntervalSinceNow
-                }
-                num += 1
-            }
-        }
-        
+        // 直近の残り時間を探す
+        let durringTime = startCountUp(time: time, dayWeek: dayWeek)
         let notificationDate = Date().addingTimeInterval(durringTime)//目標の時間との時間差(秒)
         let dateComp = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: notificationDate)
 
@@ -99,4 +72,43 @@ class NotificationModel: ObservableObject {
     func removeNotification(notificationIdentifier:String){
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
     }
+}
+
+// 設定されている1つのアラーム設定の中から、直近の残り時間を探す
+func startCountUp(time: Date, dayWeek: [String]) -> Double{
+    // 設定時刻までの時間計算
+    var setTime = time
+    
+    // AlarmRowのstartCountと同じ処理(変数は異なる)
+    var durringTime: Double = -1.0
+    if(dayWeek == []){ //日時
+        // timeが現在時刻(〇時〇分)より前の場合は1日分の時間を足す
+        if(setTime.timeIntervalSinceNow < 0){
+            setTime = Calendar.current.date(byAdding: .day, value: 1, to: setTime)!
+        }
+        // 曜日指定がない時
+        durringTime = setTime.timeIntervalSinceNow//目標の時間との時間差(秒)
+    } else {
+        // 今日の曜日を取得 (日曜日=0,月曜日=1,....土曜日=6 を返す)
+        let weekToday = Calendar.current.component(.weekday, from: Date()) % 7
+//            let weekArray: [DataAccess.DayOfWeek] = DataAccess.DayOfWeek.allCases // 検索用 曜日配列
+        
+        // timeが現在時刻(〇時〇分)より後で、その日の曜日を含む場合
+        if(setTime.timeIntervalSinceNow > 0 && dayWeek.contains(weekArray[(weekToday)].rawValue)){
+            durringTime = setTime.timeIntervalSinceNow
+        }
+        
+        // 既にdurrtingTimeが決まっている場合はループしない
+        var num = 1 // Loop用変数(指定した曜日が何日後か調べる。翌日の曜日から)
+        while durringTime == -1.0{
+            if(dayWeek.contains(weekArray[(weekToday+num) % 7].rawValue)){
+                durringTime = Double(num * 24 * 60 * 60) + setTime.timeIntervalSinceNow
+            }
+            
+            num += 1
+        }
+    }
+
+    
+    return durringTime
 }
