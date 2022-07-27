@@ -45,7 +45,7 @@ struct ContentView: View {
     @EnvironmentObject var notificationModel:NotificationModel
     
     // AlarmRow Youtube起動用Bool配列(toggleスイッチを手動で押した時のみOnOffと同期)
-    @State var rowToggleArray:[Bool] = [true]
+//    @State var rowToggleArray:[Bool] = []
     
     // 新規作成後にそのアラームをONにするため、既に作成している設定のuuidを保存しておくString配列
     @State var setUuidArray:[String] = []
@@ -105,15 +105,16 @@ struct ContentView: View {
                                 self.isModalSubview.toggle()
                                 
                                 item.onOff = false
-                                rowToggleArray[searchIndex(item: item)] = false
+//                                rowToggleArray[searchIndex(item: item)] = false
                                 
                                 viewTagColor = DataAccess.TagColor.clear
                                 
                                 index = item.wrappedUuid
                                 
                             }) {
-                                AlarmRow(dataModel: dataModel, Item: item, youTubePlayer: $youTubePlayer,rowToggleBool: $rowToggleArray[searchIndex(item: item)])
+                                AlarmRow(dataModel: dataModel, Item: item, youTubePlayer: $youTubePlayer)
                                     .environmentObject(NotificationModel()) // 通知用
+                                    
                             }
                             .sheet(isPresented: $isModalSubview) {
                                 if(items.count > 0 && item.alarmTime != nil && item.wrappedUuid == index) {
@@ -121,9 +122,7 @@ struct ContentView: View {
 //                                        .environmentObject(NotificationModel()) // 通知用
                                         .onDisappear{
                                             // rowToggleArrayの更新 & OnOffの更新
-                                            rowToggleArray = []
                                             for item in items{
-                                                rowToggleArray.append(item.onOff)
                                                 if(item.onOff){
                                                     // アラームの設定をOFFにする　明日の朝起きるための設定もOFFになるのでボツ
 //                                                    if(item.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.dayOfWeekRepeat == []){
@@ -189,11 +188,6 @@ struct ContentView: View {
                             self.isModalSubviewNew.toggle()
                             viewTagColor = DataAccess.TagColor.clear
                             
-                            rowToggleArray = []
-                            for item in items {
-                                rowToggleArray.append(item.onOff)
-                            }
-                            rowToggleArray.append(true)
                         }) {
                             Label("Add AlarmData", systemImage: "plus")
                         }
@@ -202,10 +196,8 @@ struct ContentView: View {
 //                                .environmentObject(NotificationModel()) // 通知用
                                 .onDisappear{
                                     
-                                    // rowToggleArrayの更新 & 新規作成設定の検索 → ONに変更
-                                    rowToggleArray = []
+                                    //新規作成設定の検索 → ONに変更
                                     for item in items{
-                                        rowToggleArray.append(item.onOff)
                                         if(!setUuidArray.contains(item.wrappedUuid)){
                                             item.onOff = true
                                         }
@@ -218,7 +210,6 @@ struct ContentView: View {
             
             .navigationBarTitle("アラーム")
         } // NavigationViewここまで
-        
         .onChange(of: scenePhase) { phase in
             if phase == .inactive {
                 for item in items{

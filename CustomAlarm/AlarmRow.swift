@@ -36,7 +36,7 @@ struct AlarmRow: View {
     let colorArray: [DataAccess.TagColor] = DataAccess.TagColor.allCases
     
     // AlarmRow Youtube起動用　一致確認Bool変数(toggleスイッチを手動で押してON → OFFにした時はtrueの状態)
-    @Binding var rowToggleBool:Bool
+//    @Binding var rowToggleBool:Bool
     
     var body: some View {
         ZStack(alignment: .trailing) {
@@ -76,7 +76,7 @@ struct AlarmRow: View {
                 .onChange(of: Item.onOff){ OnOff in
                     if(OnOff){
                         // 一致確認用Bool変数をtrueへ
-                        rowToggleBool = true
+                        Item.rowToggleBool = true
                         
                         // 全ての年月日更新(並び順を崩さないため)
                         for item in items {
@@ -100,7 +100,7 @@ struct AlarmRow: View {
                             // NotificationLocally.swiftに書かれている処理
                             let countDown = startCountUp(time: shortTime!.wrappedAlarmTime, dayWeek: shortTime!.dayOfWeekRepeat)
                             self.timer = Timer.scheduledTimer(withTimeInterval: countDown, repeats: false){ _ in
-                                rowToggleBool = false
+                                Item.rowToggleBool = false
                                 Item.onOff = false
                             }
                         }
@@ -110,7 +110,7 @@ struct AlarmRow: View {
                         self.notificationModel.removeNotification(notificationIdentifier: Item.wrappedUuid)
                         if(Item.soundOnOff){
                             print(Item.wrappedAlarmTime.timeIntervalSinceNow)
-                            if(!rowToggleBool){
+                            if(!Item.rowToggleBool){
 //                            youTubePlayer = YouTubePlayer(
 //                                source: .url(Item.wrappedSoundURL),
 //                                configuration: .init(
@@ -124,7 +124,7 @@ struct AlarmRow: View {
                             }
                         }
                         // 一致確認用Bool変数をfalseへ
-                        rowToggleBool = false
+                        Item.rowToggleBool = false
                         
                         timer?.invalidate()
                         timer = nil

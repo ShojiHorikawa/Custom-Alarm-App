@@ -5,6 +5,7 @@
         <attribute name="dayOfWeekRepeat" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformerName"/>
         <attribute name="label" optional="YES" attributeType="String"/>
         <attribute name="onOff" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="rowToggleBool" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="snooze" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="soundName" optional="YES" attributeType="String"/>
         <attribute name="soundOnOff" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -16,6 +17,6 @@
         <attribute name="uuid" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="AlarmData" positionX="-63" positionY="-18" width="128" height="224"/>
+        <element name="AlarmData" positionX="-63" positionY="-18" width="128" height="239"/>
     </elements>
 </model>

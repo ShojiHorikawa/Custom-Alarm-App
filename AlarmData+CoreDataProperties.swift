@@ -18,6 +18,7 @@ extension AlarmData {
 
     @NSManaged public var alarmTime: Date?
     @NSManaged public var onOff: Bool
+    @NSManaged public var rowToggleBool: Bool
     @NSManaged public var label: String?
     @NSManaged public var dayOfWeekRepeat: [String]
     @NSManaged public var snooze: Bool

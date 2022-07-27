@@ -15,6 +15,7 @@ class DataModel : ObservableObject{
     @Published var dayOfWeekRepeat: [String] = []
     @Published var label = "アラーム"
     @Published var onOff = true
+    @Published var rowToggleBool = true
     @Published var snooze = false
     @Published var soundOnOff = false
     @Published var soundURL = ""
@@ -36,6 +37,7 @@ class DataModel : ObservableObject{
             updateItem.dayOfWeekRepeat = dayOfWeekRepeat
             updateItem.label = label
             updateItem.onOff = onOff
+            updateItem.rowToggleBool = rowToggleBool
             updateItem.soundOnOff = soundOnOff
             updateItem.snooze = snooze
             updateItem.soundName = soundName
@@ -56,6 +58,7 @@ class DataModel : ObservableObject{
             dayOfWeekRepeat = []
             label = "アラーム"
             onOff = true
+            rowToggleBool = true
             snooze = false
             soundOnOff = false
             soundURL = ""
@@ -74,6 +77,7 @@ class DataModel : ObservableObject{
         newAlarmData.dayOfWeekRepeat = []
         newAlarmData.label = "アラーム"
         newAlarmData.onOff = true
+        newAlarmData.rowToggleBool = true
         newAlarmData.snooze = false
         newAlarmData.soundOnOff = false
         newAlarmData.soundURL = ""
@@ -93,6 +97,7 @@ class DataModel : ObservableObject{
             dayOfWeekRepeat = []
             label = "アラーム"
             onOff = true
+            rowToggleBool = true
             snooze = false
             soundOnOff = false
             soundURL = ""
@@ -118,6 +123,7 @@ class DataModel : ObservableObject{
         dayOfWeekRepeat = item.dayOfWeekRepeat
         label = item.wrappedLabel
         onOff = item.onOff
+        rowToggleBool = item.rowToggleBool
         snooze = item.snooze
         soundOnOff = item.soundOnOff
         soundURL = item.wrappedSoundURL

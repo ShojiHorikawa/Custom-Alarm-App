@@ -20,6 +20,7 @@ struct PersistenceController {
         newAlarmData.dayOfWeekRepeat = []
         newAlarmData.label = "アラーム"
         newAlarmData.onOff = true
+        newAlarmData.rowToggleBool = true
         newAlarmData.snooze = false
         newAlarmData.soundOnOff = false
         newAlarmData.soundURL = ""
