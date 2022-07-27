@@ -20,7 +20,7 @@ struct SettingView: View {
     @Environment(\.presentationMode) var presentationMode
     
     // 通知設定用変数
-    @EnvironmentObject var notificationModel:NotificationModel
+//    @EnvironmentObject var notificationModel:NotificationModel
     
     //
     @ObservedObject var dataModel: DataModel
@@ -62,9 +62,9 @@ struct SettingView: View {
                             //                            dataModel.rewrite(dataModel: dataModel,context: viewContext)
                             
                             // 通知の予約
-                            self.notificationModel.setNotification(time: dataModel.alarmTime, dayWeek: dataModel.dayOfWeekRepeat, uuid: dataModel.uuid, label: dataModel.label)
+//                            self.notificationModel.setNotification(time: dataModel.alarmTime, dayWeek: dataModel.dayOfWeekRepeat, uuid: dataModel.uuid, label: dataModel.label)
                             
-                            // disApperでこの処理を行う
+                            // disApperでonoff切り替えを行うための処理
                             dataModel.onOff = false
                             dataModel.writeData(context: viewContext)
                             dataModel.isNewData.toggle()
@@ -195,13 +195,15 @@ struct SettingView: View {
                     
                     dataModel.isNewData = false
                     
-                    didTapDismissButton()
+                    // 通知予約破棄 SettingViewを開いた時にOFFになるので、通知予約は既に破棄されている
+//                    self.notificationModel.removeNotification(notificationIdentifier: items[searchIndex()].wrappedUuid)
                     // 既存設定の変更かどうかを判断
                     if(dataModel.updateItem != nil) {
                         viewContext.delete(items[searchIndex()])
                         try! viewContext.save()
                     }
                     
+                    didTapDismissButton()
                     
                     // .actionSheetを使って確認メッセージを表示する
                     // https://www.choge-blog.com/programming/swiftuiactionsheetshow/

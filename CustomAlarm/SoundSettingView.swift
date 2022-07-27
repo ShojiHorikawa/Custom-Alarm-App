@@ -378,7 +378,7 @@ struct SoundSettingView: View {
                                         Text("リピート再生")
                                             .bold()
                                             .font(.headline)
-                                            .brightness(soundOnOff && soundTimeOnOff ? 0.0 : -0.5)
+                                            .brightness(soundOnOff ? 0.0 : -0.5)
                                     }// repeatTime(リピート再生時間) Button HStackここまで
                                     .padding(.bottom)
                                     // リピート再生時間設定用HStack

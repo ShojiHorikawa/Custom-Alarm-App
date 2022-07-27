@@ -44,6 +44,12 @@ struct ContentView: View {
     // 通知設定用変数
     @EnvironmentObject var notificationModel:NotificationModel
     
+    // AlarmRow Youtube起動用Bool配列(toggleスイッチを手動で押した時のみOnOffと同期)
+    @State var rowToggleArray:[Bool] = [true]
+    
+    // 新規作成後にそのアラームをONにするため、既に作成している設定のuuidを保存しておくString配列
+    @State var setUuidArray:[String] = []
+    
     var body: some View {
         NavigationView{
             //        Text("Hello")
@@ -99,22 +105,25 @@ struct ContentView: View {
                                 self.isModalSubview.toggle()
                                 
                                 item.onOff = false
+                                rowToggleArray[searchIndex(item: item)] = false
                                 
                                 viewTagColor = DataAccess.TagColor.clear
                                 
                                 index = item.wrappedUuid
                                 
                             }) {
-                                AlarmRow(dataModel: dataModel, Item: item, youTubePlayer: $youTubePlayer)
+                                AlarmRow(dataModel: dataModel, Item: item, youTubePlayer: $youTubePlayer,rowToggleBool: $rowToggleArray[searchIndex(item: item)])
                                     .environmentObject(NotificationModel()) // 通知用
                             }
                             .sheet(isPresented: $isModalSubview) {
                                 if(items.count > 0 && item.alarmTime != nil && item.wrappedUuid == index) {
                                     SettingView(dataModel: dataModel)
-                                        .environmentObject(NotificationModel()) // 通知用
+//                                        .environmentObject(NotificationModel()) // 通知用
                                         .onDisappear{
-                                            // OnOffの更新
+                                            // rowToggleArrayの更新 & OnOffの更新
+                                            rowToggleArray = []
                                             for item in items{
+                                                rowToggleArray.append(item.onOff)
                                                 if(item.onOff){
                                                     // アラームの設定をOFFにする　明日の朝起きるための設定もOFFになるのでボツ
 //                                                    if(item.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.dayOfWeekRepeat == []){
@@ -168,6 +177,9 @@ struct ContentView: View {
                     // 「＋」ボタン
                     ToolbarItem {
                         Button(action: {
+                            for item in items {
+                                setUuidArray.append(item.wrappedUuid)
+                            }
                             // 「完了」ボタンが表示されている場合、「編集」ボタンへ戻す
                             if editMode?.wrappedValue.isEditing == true {
                                 editMode?.wrappedValue = .inactive
@@ -176,12 +188,29 @@ struct ContentView: View {
                             dataModel.isNewData.toggle()
                             self.isModalSubviewNew.toggle()
                             viewTagColor = DataAccess.TagColor.clear
+                            
+                            rowToggleArray = []
+                            for item in items {
+                                rowToggleArray.append(item.onOff)
+                            }
+                            rowToggleArray.append(true)
                         }) {
                             Label("Add AlarmData", systemImage: "plus")
                         }
                         .sheet(isPresented: $isModalSubviewNew) {
                             SettingView(dataModel: DataModel())
-                                .environmentObject(NotificationModel()) // 通知用
+//                                .environmentObject(NotificationModel()) // 通知用
+                                .onDisappear{
+                                    
+                                    // rowToggleArrayの更新 & 新規作成設定の検索 → ONに変更
+                                    rowToggleArray = []
+                                    for item in items{
+                                        rowToggleArray.append(item.onOff)
+                                        if(!setUuidArray.contains(item.wrappedUuid)){
+                                            item.onOff = true
+                                        }
+                                    }
+                                }
                         } // sheetここまで
                     } // ToolbarItemここまで
                 }
@@ -220,9 +249,12 @@ struct ContentView: View {
     } // bodyここまで
     
     // データ削除
-    func deleteAlarmData(offsets: IndexSet) {
+    private func deleteAlarmData(offsets: IndexSet) {
         withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
+            for index in offsets {
+                items[index].onOff = false
+                viewContext.delete(items[index])
+            }
             
             do {
                 try viewContext.save()
@@ -236,7 +268,8 @@ struct ContentView: View {
     }
     
     // 既存設定用indexサーチ関数
-    private func searchIndex(uuid: String) -> Int {
+    private func searchIndex(item: AlarmData) -> Int {
+        let uuid = item.wrappedUuid
         // itemsから任意のitemを見つけるためのid
         var returnIndex: Int = 0
         for index in 0 ..< items.count {
