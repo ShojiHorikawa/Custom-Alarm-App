@@ -216,7 +216,7 @@ func searchShortTime(items: FetchedResults<AlarmData>) -> AlarmData?{
     // 日付を跨がないON設定のshortTimeIndex検索 (設定時間が現在時刻より遅い場合、その日の曜日も含む)
     for i in 0 ..< items.count{
         if(items[i].onOff && items[i].wrappedAlarmTime.timeIntervalSinceNow >= 0){
-            if(itemsDayWeek[i].contains(weekDay) || itemsDayWeek == []){
+            if(itemsDayWeek[i].contains(weekDay) || itemsDayWeek[i] == []){
                 if(shortTimeIndex == nil){
                     shortTimeIndex = i
                 } else if(items[shortTimeIndex!].wrappedAlarmTime.timeIntervalSinceNow > items[i].wrappedAlarmTime.timeIntervalSinceNow) {

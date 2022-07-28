@@ -25,6 +25,8 @@ struct SettingView: View {
     //
     @ObservedObject var dataModel: DataModel
     
+    @State var cancelSwitch = false
+    
     var body: some View {
         //        Text("Hello")
         // 【解決】モーダル遷移のページ上部に謎の余白発生（NavigationLinkとList追加後に発生)
@@ -35,6 +37,7 @@ struct SettingView: View {
                     HStack{
                         // キャンセルボタンを押したらアラーム設定のデータを更新しない
                         Button("キャンセル") {
+                            cancelSwitch = true
                             if(searchIndex() >= 0){
                                 items[searchIndex()].onOff = dataModel.onOff
                             }
@@ -218,11 +221,18 @@ struct SettingView: View {
                 
                 Spacer()
             } // VStack ここまで
-            
+            // もし、キャンセルボタンを押さずにスライドでキャンセルした場合の処理
+            .onDisappear{
+                if(!cancelSwitch){
+                    if(searchIndex() >= 0){
+                        items[searchIndex()].onOff = dataModel.onOff
+                    }
+                    dataModel.isNewData = false
+                }
+            }
             // NavigationBarのTitleを消すためのコードはNavigationViewの範囲内のListやVStackの{}の後ろに付ける
             .navigationBarHidden(true)
         } // NavigationView ここまで
-        
     } // body ここまで
     
     // モーダル遷移を閉じるための関数
