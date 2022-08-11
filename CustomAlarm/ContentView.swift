@@ -121,13 +121,10 @@ struct ContentView: View {
                                     SettingView(dataModel: dataModel)
 //                                        .environmentObject(NotificationModel()) // 通知用
                                         .onDisappear{
+                                            print("Setting画面を閉じました")
                                             // rowToggleArrayの更新 & OnOffの更新
                                             for item in items{
                                                 if(item.onOff){
-                                                    // アラームの設定をOFFにする　明日の朝起きるための設定もOFFになるのでボツ
-//                                                    if(item.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.dayOfWeekRepeat == []){
-//                                                        item.onOff = false
-//                                                    }
                                                     // アラームの設定 年月日を更新
                                                     item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
                                                 }
@@ -139,10 +136,6 @@ struct ContentView: View {
                                                 dataModel.isNewData.toggle()
                                             }
                                         } // onDisapperここまで
-                                        .onAppear{
-//                                            timer?.invalidate()
-//                                            timer = nil
-                                        }
                                 }
                             } // sheetここまで
                             
