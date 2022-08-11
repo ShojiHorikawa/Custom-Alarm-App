@@ -109,6 +109,7 @@ struct ContentView: View {
                                 
                                 viewTagColor = DataAccess.TagColor.clear
                                 
+                                // indexは今は使わないが、念の為残している 2022.08.11
                                 index = item.wrappedUuid
                                 
                             }) {
@@ -117,7 +118,8 @@ struct ContentView: View {
                                     
                             }
                             .sheet(isPresented: $isModalSubview) {
-                                if(items.count > 0 && item.alarmTime != nil && item.wrappedUuid == index) {
+                                //↓ ifの条件から「item.wrappedUuid == index」を削除 2022.08.11
+                                if(items.count > 0 && item.alarmTime != nil) {
                                     SettingView(dataModel: dataModel)
 //                                        .environmentObject(NotificationModel()) // 通知用
                                         .onDisappear{
