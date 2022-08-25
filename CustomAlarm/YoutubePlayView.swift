@@ -58,13 +58,14 @@ struct YoutubePlayView: View {
 //                youTubePlayer.play()
 //            }
             youTubePlayer.source = .url(url)
-            if(IntervalTime == 0){
+//            if(IntervalTime == 0){
                 _ = Timer.scheduledTimer(
                     withTimeInterval: 3,
                     repeats: false){ _ in
                         youTubePlayer.seek(to: Double(seekTime), allowSeekAhead: true)
                     }
-            } else if(IntervalTime != 0) {
+//            } else
+        if(IntervalTime != 0) {
                 _ = Timer.scheduledTimer(
                     withTimeInterval: TimeInterval(IntervalTime),
                     repeats: true){ _ in
