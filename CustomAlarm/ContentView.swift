@@ -119,11 +119,17 @@ struct ContentView: View {
                             }
                             .sheet(isPresented: $isModalSubview) {
                                 //↓ ifの条件から「item.wrappedUuid == index」を削除 2022.08.11
-                                if(items.count > 0 && item.alarmTime != nil) {
+                                //  2022.10.31 if(items.count > 0&& item.alarmTime != nil)からif(items.count > 0)に書き換え。
+                                //  2022.10.31 item.alarmTimeがnilとなっていたことが原因(その理由は不明)
+                                if(items.count > 0) {
                                     SettingView(dataModel: dataModel)
 //                                        .environmentObject(NotificationModel()) // 通知用
                                         .onDisappear{
                                             print("Setting画面を閉じました")
+                                            if(dataModel.isNewData){
+                                                item.onOff = true
+                                                dataModel.isNewData.toggle()
+                                            }
                                             // rowToggleArrayの更新 & OnOffの更新
                                             for item in items{
                                                 if(item.onOff){
@@ -133,10 +139,7 @@ struct ContentView: View {
                                             }
                                             try! viewContext.save()
                                             
-                                            if(dataModel.isNewData){
-                                                item.onOff = true
-                                                dataModel.isNewData.toggle()
-                                            }
+                                            
                                         } // onDisapperここまで
                                 }
                             } // sheetここまで
