@@ -110,44 +110,47 @@ struct ContentView: View {
                                 viewTagColor = DataAccess.TagColor.clear
                                 
                                 // indexは今は使わないが、念の為残している 2022.08.11
+                                // .sheetをForEachの外へ移した時にitemの代わりにindexを使って、itemsの配列から指定
                                 index = item.wrappedUuid
                                 
                             }) {
                                 AlarmRow(dataModel: dataModel, Item: item, youTubePlayer: $youTubePlayer)
                                     .environmentObject(NotificationModel()) // 通知用
-                                    
                             }
-                            .sheet(isPresented: $isModalSubview) {
-                                //↓ ifの条件から「item.wrappedUuid == index」を削除 2022.08.11
-                                //  2022.10.31 if(items.count > 0&& item.alarmTime != nil)からif(items.count > 0)に書き換え。
-                                //  2022.10.31 item.alarmTimeがnilとなっていたことが原因(その理由は不明)
-                                if(items.count > 0) {
-                                    SettingView(dataModel: dataModel)
-//                                        .environmentObject(NotificationModel()) // 通知用
-                                        .onDisappear{
-                                            print("Setting画面を閉じました")
-                                            if(dataModel.isNewData){
-                                                item.onOff = true
-                                                dataModel.isNewData.toggle()
-                                            }
-                                            // rowToggleArrayの更新 & OnOffの更新
-                                            for item in items{
-                                                if(item.onOff){
-                                                    // アラームの設定 年月日を更新
-                                                    item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
-                                                }
-                                            }
-                                            try! viewContext.save()
-                                            
-                                            
-                                        } // onDisapperここまで
-                                }
-                            } // sheetここまで
+                            
                             
                             
                         } // ifここまで
                     } // ForEachここまで
                     .onDelete(perform: deleteAlarmData)
+                    .sheet(isPresented: self.$isModalSubview) {
+                        
+                        //↓ ifの条件から「item.wrappedUuid == index」を削除 2022.08.11
+                        //  2022.10.31 if(items.count > 0&& item.alarmTime != nil)からif(items.count > 0)に書き換え。
+                        //  2022.10.31 item.alarmTimeがnilとなっていたことが原因(その理由は不明)
+                        
+                        // 既存のアラーム設定がある場合の設定ページを開く処理
+                        if(items.count > 0 && items[searchIndex(uuid: index)].alarmTime != nil){
+//                                if(items.count > 0) {
+                            SettingView(dataModel: dataModel)
+                                .onDisappear{
+                                    print("Setting画面を閉じました")
+                                    // rowToggleArrayの更新 & OnOffの更新
+                                    for item in items{
+                                        if(item.onOff){
+                                            // アラームの設定 年月日を更新
+                                            item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
+                                        }
+                                    }
+                                    try! viewContext.save()
+                                    
+                                    if(dataModel.isNewData){
+                                        items[searchIndex(uuid: index)].onOff = true
+                                        dataModel.isNewData.toggle()
+                                    }
+                                } // onDisapperここまで
+                        }
+                    } // sheetここまで
                 }// List ここまで
                 .listStyle(PlainListStyle())  // listの表示スタイルを指定
                 .edgesIgnoringSafeArea(.top)
@@ -257,8 +260,8 @@ struct ContentView: View {
     }
     
     // 既存設定用indexサーチ関数
-    private func searchIndex(item: AlarmData) -> Int {
-        let uuid = item.wrappedUuid
+    private func searchIndex(uuid: String) -> Int {
+//        let uuid = item.wrappedUuid
         // itemsから任意のitemを見つけるためのid
         var returnIndex: Int = 0
         for index in 0 ..< items.count {
