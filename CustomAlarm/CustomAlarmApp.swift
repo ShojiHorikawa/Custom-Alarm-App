@@ -11,13 +11,13 @@ import SwiftUI
 struct CustomAlarmApp: App {
     let persistenceController = PersistenceController.shared
     @Environment(\.scenePhase) private var scenePhase
-    @State var index = ""
+    
 
     // 通知済みのものを削除するための宣言
     let center = UNUserNotificationCenter.current()
     var body: some Scene {
         WindowGroup {
-            ContentView(index: $index)
+            MainView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
         .onChange(of: scenePhase) { phase in

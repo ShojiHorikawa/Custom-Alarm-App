@@ -31,6 +31,15 @@ struct PersistenceController {
         newAlarmData.tagColor = DataAccess.TagColor.clear.rawValue
         newAlarmData.uuid = UUID().uuidString
         
+        let newSoundData = SoundData(context: viewContext)
+        newSoundData.createdTime_S = Date()
+        newSoundData.soundURL_S = ""
+        newSoundData.soundName_S = ""
+        newSoundData.soundTime_S = 0
+        newSoundData.soundTimeOnOff_S = false
+        newSoundData.soundReturnTime_S = 0
+        newSoundData.uuid_S = UUID().uuidString
+        
 //        }
         do {
             try viewContext.save()

@@ -34,6 +34,7 @@ struct ContentView: View {
     @Environment(\.editMode) var editMode
     
     // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
+    //Bindingにすることでindexの値を保持する
     @Binding var index: String
     // 識別色タグの分類表示用変数
     @State var viewTagColor: DataAccess.TagColor = DataAccess.TagColor.clear
