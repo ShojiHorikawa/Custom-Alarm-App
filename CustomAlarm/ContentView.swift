@@ -262,7 +262,6 @@ struct ContentView: View {
     
     // 既存設定用indexサーチ関数
     private func searchIndex(uuid: String) -> Int {
-//        let uuid = item.wrappedUuid
         // itemsから任意のitemを見つけるためのid
         var returnIndex: Int = 0
         for index in 0 ..< items.count {

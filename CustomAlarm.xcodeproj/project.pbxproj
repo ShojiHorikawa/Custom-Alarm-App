@@ -15,6 +15,7 @@
 		6D35A84E2913C955009919A7 /* SoundDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D35A84D2913C955009919A7 /* SoundDataModel.swift */; };
 		6D35A8512913CBF7009919A7 /* SoundData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D35A84F2913CBF7009919A7 /* SoundData+CoreDataClass.swift */; };
 		6D35A8522913CBF7009919A7 /* SoundData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D35A8502913CBF7009919A7 /* SoundData+CoreDataProperties.swift */; };
+		6D35A8542913F3D4009919A7 /* SoundRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D35A8532913F3D4009919A7 /* SoundRow.swift */; };
 		6D3AE2362879B0C6005ECED6 /* ColorTagSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3AE2352879B0C6005ECED6 /* ColorTagSettingView.swift */; };
 		6D3AE23B287FF03D005ECED6 /* NotificationLocally.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3AE23A287FF03D005ECED6 /* NotificationLocally.swift */; };
 		6D4BB4CF2869A3D200F4C115 /* CustomAlarmApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4BB4CE2869A3D200F4C115 /* CustomAlarmApp.swift */; };
@@ -43,6 +44,7 @@
 		6D35A84D2913C955009919A7 /* SoundDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundDataModel.swift; sourceTree = "<group>"; };
 		6D35A84F2913CBF7009919A7 /* SoundData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SoundData+CoreDataClass.swift"; sourceTree = "<group>"; };
 		6D35A8502913CBF7009919A7 /* SoundData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SoundData+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		6D35A8532913F3D4009919A7 /* SoundRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundRow.swift; sourceTree = "<group>"; };
 		6D3AE2352879B0C6005ECED6 /* ColorTagSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorTagSettingView.swift; sourceTree = "<group>"; };
 		6D3AE237287BF6C4005ECED6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6D3AE23A287FF03D005ECED6 /* NotificationLocally.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationLocally.swift; sourceTree = "<group>"; };
@@ -99,13 +101,15 @@
 			isa = PBXGroup;
 			children = (
 				6D3AE237287BF6C4005ECED6 /* Info.plist */,
+				6D4BB4D72869A3D400F4C115 /* Persistence.swift */,
+				6D4BB50E286D882A00F4C115 /* DataModel.swift */,
+				6D35A84D2913C955009919A7 /* SoundDataModel.swift */,
 				6D4BB4CE2869A3D200F4C115 /* CustomAlarmApp.swift */,
 				6D35A84929129694009919A7 /* MainView.swift */,
-				6D35A84B2913A190009919A7 /* AppSettingView.swift */,
 				6D4BB4D02869A3D200F4C115 /* ContentView.swift */,
 				6D4BB4E12869A6C400F4C115 /* AlarmRow.swift */,
-				6D978B28288CFA4B007D13B2 /* YoutubePlayView.swift */,
-				6D3AE23A287FF03D005ECED6 /* NotificationLocally.swift */,
+				6D35A84B2913A190009919A7 /* AppSettingView.swift */,
+				6D35A8532913F3D4009919A7 /* SoundRow.swift */,
 				6D4BB4D22869A3D400F4C115 /* Assets.xcassets */,
 				6D4BB4E72869B9CC00F4C115 /* SettingView.swift */,
 				6D978B2F288D2D77007D13B2 /* ForgroungOnOff.swift */,
@@ -113,9 +117,8 @@
 				6D11FCB22871DD8A003DD6ED /* LabelSettingView.swift */,
 				6D11FCB628752948003DD6ED /* SoundSettingView.swift */,
 				6D3AE2352879B0C6005ECED6 /* ColorTagSettingView.swift */,
-				6D4BB50E286D882A00F4C115 /* DataModel.swift */,
-				6D35A84D2913C955009919A7 /* SoundDataModel.swift */,
-				6D4BB4D72869A3D400F4C115 /* Persistence.swift */,
+				6D978B28288CFA4B007D13B2 /* YoutubePlayView.swift */,
+				6D3AE23A287FF03D005ECED6 /* NotificationLocally.swift */,
 				6D4BB4E92869BE6700F4C115 /* DataAccess.swift */,
 				6D4BB4D92869A3D400F4C115 /* CustomAlarm.xcdatamodeld */,
 				6D4BB4D42869A3D400F4C115 /* Preview Content */,
@@ -217,6 +220,7 @@
 				6D4BB4DB2869A3D400F4C115 /* CustomAlarm.xcdatamodeld in Sources */,
 				6D35A84C2913A190009919A7 /* AppSettingView.swift in Sources */,
 				6D4BB4E62869AE7900F4C115 /* AlarmData+CoreDataProperties.swift in Sources */,
+				6D35A8542913F3D4009919A7 /* SoundRow.swift in Sources */,
 				6D4BB4D82869A3D400F4C115 /* Persistence.swift in Sources */,
 				6D4BB4D12869A3D200F4C115 /* ContentView.swift in Sources */,
 				6D3AE2362879B0C6005ECED6 /* ColorTagSettingView.swift in Sources */,

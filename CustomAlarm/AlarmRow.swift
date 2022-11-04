@@ -22,7 +22,7 @@ struct AlarmRow: View {
     
     
     // 7/1 試しに実装
-    @ObservedObject var dataModel: DataModel
+    @ObservedObject var dataModel: DataModel // 使っていない
     @ObservedObject var Item: AlarmData
     
     // アラームが鳴るとアラーム設定がOFFになるカウントダウン処理変数
@@ -63,7 +63,7 @@ struct AlarmRow: View {
                         }
                     }
                     
-                    Text(Item.wrappedLabel)
+                    Text(cutAlarmName(text:Item.wrappedLabel))
                         .font(.body)
                         .fontWeight(.light)
                         .brightness(Item.onOff ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
@@ -166,6 +166,28 @@ struct AlarmRow: View {
     private func stop(){
         timer?.invalidate()
         timer = nil
+    }
+    
+    // 受け取った文字列をギリギリ画面を折り返さない文字列に書き換え
+    private func cutAlarmName(text: String) -> String{
+        var textCount = 0
+        var textByte = 0
+        
+        // ギリギリ画面を折り返さない文字数を計算する
+        for character in text{
+            textByte += character.utf8.count == 1 ? 1 : 2    // 半角(1バイト)なら1文字分,全角(3バイト)なら2文字分
+            if(textByte <= 36){
+                textCount += 1
+            }
+        }
+        var returnText = ""
+        if(textByte <= 14){
+            returnText = text
+        } else {
+            returnText = String(text.prefix(textCount-1)) + "..."
+        }
+
+        return returnText
     }
 }
 

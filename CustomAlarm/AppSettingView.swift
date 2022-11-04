@@ -29,7 +29,40 @@ struct AppSettingView: View {
     @Binding var index2: String
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
+    } // body ここまで
+    
+    // データ削除
+    private func deleteAlarmData(offsets: IndexSet) {
+        withAnimation {
+            for index in offsets {
+                viewContext.delete(items_S[index])
+            }
+            
+            do {
+                try viewContext.save()
+            } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    } // delet func ここまで
+    
+    // 既存設定用indexサーチ関数
+    private func searchIndex(uuid_S: String) -> Int {
+        // itemsから任意のitemを見つけるためのid
+        var returnIndex: Int = 0
+        for index in 0 ..< items_S.count {
+            if(items_S[index].createdTime_S != nil) {
+                if(items_S[index].wrappedUuid_S == uuid_S){
+                    returnIndex = index
+                }
+            }
+        }
+        return returnIndex
+    } // search func ここまで
+    
 }
 
 struct AppSettingView_Previews: PreviewProvider {
