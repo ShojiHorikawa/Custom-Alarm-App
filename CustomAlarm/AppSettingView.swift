@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct AppSettingView: View {
     // CoreData保存用変数
@@ -24,15 +25,73 @@ struct AppSettingView: View {
     // 既存設定用のモーダル遷移起動変数
     @State var isModalSubview_S = false
     
+    // オリジナル編集・完了ボタン用変数
+    @Environment(\.editMode) var editMode
+    
     // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
     //Bindingにすることでindexの値を保持する
     @Binding var index2: String
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationView{
+            VStack{
+                List{
+                    // 設定済みサウンドList表示
+                    ForEach(items_S){ item_S in
+                        Button(action: {
+                            // Sound設定を開く
+                        }){
+                            SoundRow(Item_S: item_S,soundIndex: searchIndex(uuid_S: item_S.wrappedUuid_S))
+                        }
+                    } // ForEachここまで
+                    .onDelete(perform: deleteSoundData)
+                } // Listここまで
+                .listStyle(PlainListStyle())  // listの表示スタイルを指定
+//                .edgesIgnoringSafeArea(.top)
+                .toolbar {
+                    // 「編集」ボタン
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        // オリジナルEditButtonに置き換え
+                        Button(action: {
+                            withAnimation() {
+                                if editMode?.wrappedValue.isEditing == true {
+                                    editMode?.wrappedValue = .inactive
+                                } else {
+                                    editMode?.wrappedValue = .active
+                                }
+                            }
+                        }) {
+                            if editMode?.wrappedValue.isEditing == true {
+                                Text("完了")
+                            } else {
+                                Text("編集")
+                            }
+                        }
+                    }
+                    // 「＋」ボタン
+                    ToolbarItem {
+                        Button(action: {
+                            // 「完了」ボタンが表示されている場合、「編集」ボタンへ戻す
+                            if editMode?.wrappedValue.isEditing == true {
+                                editMode?.wrappedValue = .inactive
+                            }
+                            
+                            soundDataModel.isNewData_S.toggle()
+                            self.isModalSubviewNew_S.toggle()
+                        }) {
+                            Label("Add SoundData", systemImage: "plus")
+                        }
+                        .sheet(isPresented: $isModalSubviewNew_S) {
+                            //                        SettingView(dataModel: DataModel())
+                        } // sheetここまで
+                    } // ToolbarItemここまで
+                } // toolbarここまで
+            }
+            .navigationBarTitle("サウンドリスト")
+        } // NavigationView ここまで
     } // body ここまで
     
     // データ削除
-    private func deleteAlarmData(offsets: IndexSet) {
+    private func deleteSoundData(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
                 viewContext.delete(items_S[index])

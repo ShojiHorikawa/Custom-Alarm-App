@@ -207,7 +207,7 @@ struct ContentView: View {
                                 }
                         } // sheetここまで
                     } // ToolbarItemここまで
-                }
+                } // toolbarここまで
             } // VStackここまで
             
             .navigationBarTitle("アラーム")

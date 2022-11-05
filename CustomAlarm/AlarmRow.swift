@@ -148,7 +148,7 @@ struct AlarmRow: View {
                     try! viewContext.save()
                 }// Toggle ここまで
             .sheet(isPresented: $isModalSubviewYT) {
-                YoutubePlayView(url: Item.wrappedSoundURL, IntervalTime: Item.soundReturnTime, seekTime: Item.soundTime)
+                YoutubePlayView(url: Item.wrappedSoundURL, IntervalTime: Item.soundRepeatTime, seekTime: Item.soundTime)
             } // sheetここまで
             
             ForEach(colorArray,id: \.self){ color in

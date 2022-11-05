@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21279" systemVersion="22A380" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21512" systemVersion="22A380" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AlarmData" representedClassName="AlarmData" syncable="YES">
         <attribute name="alarmTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="dayOfWeekRepeat" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformerName"/>
@@ -9,7 +9,7 @@
         <attribute name="snooze" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="soundName" optional="YES" attributeType="String"/>
         <attribute name="soundOnOff" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="soundReturnTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="soundRepeatTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="soundTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="soundTimeOnOff" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="soundURL" optional="YES" attributeType="String"/>
@@ -19,7 +19,7 @@
     <entity name="SoundData" representedClassName="SoundData" syncable="YES">
         <attribute name="createdTime_S" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="soundName_S" optional="YES" attributeType="String"/>
-        <attribute name="soundReturnTime_S" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="soundRepeatTime_S" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="soundTime_S" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="soundTimeOnOff_S" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="soundURL_S" optional="YES" attributeType="String"/>

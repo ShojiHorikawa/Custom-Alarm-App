@@ -15,7 +15,7 @@ class SoundDataModel : ObservableObject{
     @Published var soundName_S = ""
     @Published var soundTime_S: Int = 0
     @Published var soundTimeOnOff_S = false
-    @Published var soundReturnTime_S: Int = 0
+    @Published var soundRepeatTime_S: Int = 0
     @Published var uuid_S = UUID().uuidString
 
     @Published var isNewData_S = false
@@ -30,7 +30,7 @@ class SoundDataModel : ObservableObject{
             updateItem_S.soundURL_S = soundURL_S
             updateItem_S.soundTime_S = Int16(soundTime_S)
             updateItem_S.soundTimeOnOff_S = soundTimeOnOff_S
-            updateItem_S.soundReturnTime_S = Int16(soundReturnTime_S)
+            updateItem_S.soundRepeatTime_S = Int16(soundRepeatTime_S)
             updateItem_S.uuid_S = uuid_S
             
             
@@ -44,7 +44,7 @@ class SoundDataModel : ObservableObject{
             soundName_S = ""
             soundTime_S = 0
             soundTimeOnOff_S = false
-            soundReturnTime_S = 0
+            soundRepeatTime_S = 0
             uuid_S = UUID().uuidString
  
             return
@@ -56,7 +56,7 @@ class SoundDataModel : ObservableObject{
         newSoundData.soundName_S = ""
         newSoundData.soundTime_S = 0
         newSoundData.soundTimeOnOff_S = false
-        newSoundData.soundReturnTime_S = 0
+        newSoundData.soundRepeatTime_S = 0
         newSoundData.uuid_S = UUID().uuidString
         
         do{
@@ -69,7 +69,7 @@ class SoundDataModel : ObservableObject{
             soundName_S = ""
             soundTime_S = 0
             soundTimeOnOff_S = false
-            soundReturnTime_S = 0
+            soundRepeatTime_S = 0
             uuid_S = UUID().uuidString
             
             
@@ -88,7 +88,7 @@ class SoundDataModel : ObservableObject{
         soundName_S = item.wrappedSoundName_S
         soundTime_S = Int(item.soundTime_S)
         soundTimeOnOff_S = item.soundTimeOnOff_S
-        soundReturnTime_S = Int(item.soundReturnTime_S)
+        soundRepeatTime_S = Int(item.soundRepeatTime_S)
         uuid_S = item.wrappedUuid_S
 
         isNewData_S.toggle()

@@ -17,7 +17,7 @@ struct SoundSettingView: View {
     @Binding var soundName: String
     @Binding var soundTime: Int
     @Binding var soundTimeOnOff: Bool
-    @Binding var soundReturnTime: Int
+    @Binding var soundRepeatTime: Int
     
     
     // 開始時間(タイムスタンプ)入力用変数
@@ -25,7 +25,7 @@ struct SoundSettingView: View {
     @State var minInt = 0
     @State var secInt = 0
     
-    // リピート変数(onApperの時にsoundReturnTimeが0かどうかで変更)
+    // リピート変数(onApperの時にsoundRepeatTimeが0かどうかで変更)
     @State var RepeatBool = false
     // リピート時間入力用変数
     @State var hourIntRe = 0
@@ -532,17 +532,17 @@ struct SoundSettingView: View {
             minInt = soundTime / 60 % 60
             hourInt = soundTime / 3600
             
-            if(soundReturnTime != 0){
+            if(soundRepeatTime != 0){
                 RepeatBool = true
             }
-            secIntRe = soundReturnTime % 60
-            minIntRe = soundReturnTime / 60 % 60
-            hourIntRe = soundReturnTime / 3600
+            secIntRe = soundRepeatTime % 60
+            minIntRe = soundRepeatTime / 60 % 60
+            hourIntRe = soundRepeatTime / 3600
         }
         .onDisappear{
             soundTime = hourInt * 3600 + minInt * 60 + secInt
             
-            soundReturnTime = hourIntRe * 3600 + minIntRe * 60 + secIntRe
+            soundRepeatTime = hourIntRe * 3600 + minIntRe * 60 + secIntRe
         }
     }
 }
@@ -626,6 +626,6 @@ struct SelectPicker: View {
 
 struct SoundSettingView_Previews: PreviewProvider {
     static var previews: some View {
-        SoundSettingView(soundOnOff: Binding.constant(true), soundURL:Binding.constant(""), soundName: Binding.constant(""),soundTime: Binding.constant(0),soundTimeOnOff: Binding.constant(true),soundReturnTime: Binding.constant(0))
+        SoundSettingView(soundOnOff: Binding.constant(true), soundURL:Binding.constant(""), soundName: Binding.constant(""),soundTime: Binding.constant(0),soundTimeOnOff: Binding.constant(true),soundRepeatTime: Binding.constant(0))
     }
 }

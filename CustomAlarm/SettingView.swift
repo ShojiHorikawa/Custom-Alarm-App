@@ -134,7 +134,7 @@ struct SettingView: View {
                     
                     
                     // 【移動】SoundSetting.swiftへ プッシュ遷移
-                    NavigationLink(destination: SoundSettingView(soundOnOff: $dataModel.soundOnOff, soundURL: $dataModel.soundURL, soundName: $dataModel.soundName,soundTime: $dataModel.soundTime, soundTimeOnOff: $dataModel.soundTimeOnOff,soundReturnTime: $dataModel.soundReturnTime)){
+                    NavigationLink(destination: SoundSettingView(soundOnOff: $dataModel.soundOnOff, soundURL: $dataModel.soundURL, soundName: $dataModel.soundName,soundTime: $dataModel.soundTime, soundTimeOnOff: $dataModel.soundTimeOnOff,soundRepeatTime: $dataModel.soundRepeatTime)){
                         Text("サウンド")
                             .foregroundColor(Color.white)
                         

@@ -22,7 +22,7 @@ class DataModel : ObservableObject{
     @Published var soundName = ""
     @Published var soundTime: Int = 0
     @Published var soundTimeOnOff = false
-    @Published var soundReturnTime: Int = 0
+    @Published var soundRepeatTime: Int = 0
     @Published var tagColor: String = DataAccess.TagColor.clear.rawValue
     @Published var uuid = UUID().uuidString
 
@@ -44,7 +44,7 @@ class DataModel : ObservableObject{
             updateItem.soundURL = soundURL
             updateItem.soundTime = Int16(soundTime)
             updateItem.soundTimeOnOff = soundTimeOnOff
-            updateItem.soundReturnTime = Int16(soundReturnTime)
+            updateItem.soundRepeatTime = Int16(soundRepeatTime)
             updateItem.tagColor = tagColor
             updateItem.uuid = uuid
             
@@ -65,7 +65,7 @@ class DataModel : ObservableObject{
             soundName = ""
             soundTime = 0
             soundTimeOnOff = false
-            soundReturnTime = 0
+            soundRepeatTime = 0
             tagColor = DataAccess.TagColor.clear.rawValue
             uuid = UUID().uuidString
  
@@ -84,7 +84,7 @@ class DataModel : ObservableObject{
         newAlarmData.soundName = ""
         newAlarmData.soundTime = 0
         newAlarmData.soundTimeOnOff = false
-        newAlarmData.soundReturnTime = 0
+        newAlarmData.soundRepeatTime = 0
         newAlarmData.tagColor = "red"
         newAlarmData.uuid = UUID().uuidString
         
@@ -104,7 +104,7 @@ class DataModel : ObservableObject{
             soundName = ""
             soundTime = 0
             soundTimeOnOff = false
-            soundReturnTime = 0
+            soundRepeatTime = 0
             tagColor = DataAccess.TagColor.clear.rawValue
             uuid = UUID().uuidString
             
@@ -131,7 +131,7 @@ class DataModel : ObservableObject{
         tagColor = item.wrappedTagColor
         soundTime = Int(item.soundTime)
         soundTimeOnOff = item.soundTimeOnOff
-        soundReturnTime = Int(item.soundReturnTime)
+        soundRepeatTime = Int(item.soundRepeatTime)
         uuid = item.wrappedUuid
 
         isNewData.toggle()

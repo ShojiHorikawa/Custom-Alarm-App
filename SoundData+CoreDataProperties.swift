@@ -18,7 +18,7 @@ extension SoundData {
 
     @NSManaged public var createdTime_S: Date?
     @NSManaged public var soundName_S: String?
-    @NSManaged public var soundReturnTime_S: Int16
+    @NSManaged public var soundRepeatTime_S: Int16
     @NSManaged public var soundTime_S: Int16
     @NSManaged public var soundTimeOnOff_S: Bool
     @NSManaged public var soundURL_S: String?
