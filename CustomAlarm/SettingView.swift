@@ -25,6 +25,7 @@ struct SettingView: View {
     //
     @ObservedObject var dataModel: DataModel
     
+    // キャンセルが押されたかどうか判断するBool変数
     @State var cancelSwitch = false
     
     var body: some View {

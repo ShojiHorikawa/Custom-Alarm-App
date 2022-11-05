@@ -11,7 +11,7 @@ struct MainView: View {
     //使用するシンボル 時計:alarm.fill 歯車:gearshape.fill
     // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
     @State var index = ""
-    @State var index2 = ""
+    @State var index_S = ""
     @State private var selection = 0
     init() {
         UITabBar.appearance().backgroundColor = .black.withAlphaComponent(0.5)
@@ -27,7 +27,7 @@ struct MainView: View {
                                 .font(.caption)
                                 .fontWeight(.black)
                     }
-                AppSettingView(index2: $index2)
+                AppSettingView(index_S: $index_S)
                     .tabItem{
                             Image(systemName: "gearshape.fill")
                                 .foregroundColor(Color("DarkOrange"))

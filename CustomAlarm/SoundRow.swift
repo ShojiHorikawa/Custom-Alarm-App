@@ -48,7 +48,7 @@ struct SoundRow: View {
                     .fontWeight(.light)
                     .brightness(Item_S.soundTimeOnOff_S ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
 //                Spacer()
-                Text("    リピート \(RepeatBool ? "\(hourInt):\(String(format: "%02d", minInt)):\(String(format: "%02d", secInt))" : "OFF")")
+                Text("  リピート \(RepeatBool ? "\(hourIntRe):\(String(format: "%02d", minIntRe)):\(String(format: "%02d", secIntRe))" : "OFF")")
                     .font(.headline)
                     .fontWeight(.light)
                     .brightness(RepeatBool ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
