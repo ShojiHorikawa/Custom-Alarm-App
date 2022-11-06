@@ -28,6 +28,9 @@ struct SettingView: View {
     // キャンセルが押されたかどうか判断するBool変数
     @State var cancelSwitch = false
     
+    // Sound CoreDataを使う変数群
+    @State var soundButtonText = "登録した設定を使う"
+    @State var soundButtonUuid = ""
     var body: some View {
         //        Text("Hello")
         // 【解決】モーダル遷移のページ上部に謎の余白発生（NavigationLinkとList追加後に発生)
@@ -135,7 +138,7 @@ struct SettingView: View {
                     
                     
                     // 【移動】SoundSetting.swiftへ プッシュ遷移
-                    NavigationLink(destination: SoundSettingView(soundOnOff: $dataModel.soundOnOff, soundURL: $dataModel.soundURL, soundName: $dataModel.soundName,soundTime: $dataModel.soundTime, soundTimeOnOff: $dataModel.soundTimeOnOff,soundRepeatTime: $dataModel.soundRepeatTime)){
+                    NavigationLink(destination: SoundSettingView(soundButtonText: $soundButtonText,soundButtonUuid: $soundButtonUuid,soundOnOff: $dataModel.soundOnOff, soundURL: $dataModel.soundURL, soundName: $dataModel.soundName,soundTime: $dataModel.soundTime, soundTimeOnOff: $dataModel.soundTimeOnOff,soundRepeatTime: $dataModel.soundRepeatTime)){
                         Text("サウンド")
                             .foregroundColor(Color.white)
                         
