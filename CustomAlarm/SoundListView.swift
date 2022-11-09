@@ -8,7 +8,7 @@
 import SwiftUI
 import CoreData
 
-struct AppSettingView: View {
+struct SoundListView: View {
     // CoreData保存用変数
     @Environment(\.managedObjectContext) var viewContext
     
@@ -26,7 +26,7 @@ struct AppSettingView: View {
     @State var isModalSubview_S = false
     
     // オリジナル編集・完了ボタン用変数
-    @Environment(\.editMode) var editMode
+//    @Environment(\.editMode) var editMode
     
     
     // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
@@ -72,30 +72,32 @@ struct AppSettingView: View {
                 .toolbar {
                     // 「編集」ボタン
                     ToolbarItem(placement: .navigationBarLeading) {
+                        // ContentView.swift内に書いたstructを使う
+//                        MyEditButton()
                         // オリジナルEditButtonに置き換え
-                        Button(action: {
-                            withAnimation() {
-                                if editMode?.wrappedValue.isEditing == true {
-                                    editMode?.wrappedValue = .inactive
-                                } else {
-                                    editMode?.wrappedValue = .active
-                                }
-                            }
-                        }) {
-                            if editMode?.wrappedValue.isEditing == true {
-                                Text("完了")
-                            } else {
-                                Text("編集")
-                            }
-                        }
+//                        Button(action: {
+//                            withAnimation() {
+//                                if editMode?.wrappedValue.isEditing == true {
+//                                    editMode?.wrappedValue = .inactive
+//                                } else {
+//                                    editMode?.wrappedValue = .active
+//                                }
+//                            }
+//                        }) {
+//                            if editMode?.wrappedValue.isEditing == true {
+//                                Text("完了")
+//                            } else {
+//                                Text("編集")
+//                            }
+//                        }
                     }
                     // 「＋」ボタン
                     ToolbarItem {
                         Button(action: {
                             // 「完了」ボタンが表示されている場合、「編集」ボタンへ戻す
-                            if editMode?.wrappedValue.isEditing == true {
-                                editMode?.wrappedValue = .inactive
-                            }
+//                            if editMode?.wrappedValue.isEditing == true {
+//                                editMode?.wrappedValue = .inactive
+//                            }
                             
                             soundDataModel.isNewData_S.toggle()
                             self.isModalSubviewNew_S.toggle()
@@ -146,8 +148,8 @@ struct AppSettingView: View {
     
 }
 
-struct AppSettingView_Previews: PreviewProvider {
+struct SoundListView_Previews: PreviewProvider {
     static var previews: some View {
-        AppSettingView(index_S: Binding.constant("")).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        SoundListView(index_S: Binding.constant("")).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

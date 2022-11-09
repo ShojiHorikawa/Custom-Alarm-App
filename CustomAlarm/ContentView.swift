@@ -32,10 +32,9 @@ struct ContentView: View {
     
     // オリジナル編集・完了ボタン用変数
     @Environment(\.editMode) var editMode
+//    @State var editMode: EditMode = .inactive
     
-    // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
-    //Bindingにすることでindexの値を保持する
-    @Binding var index: String
+    
     // 識別色タグの分類表示用変数
     @State var viewTagColor: DataAccess.TagColor = DataAccess.TagColor.clear
     
@@ -50,6 +49,15 @@ struct ContentView: View {
     
     // 新規作成後にそのアラームをONにするため、既に作成している設定のuuidを保存しておくString配列
     @State var setUuidArray:[String] = []
+    
+    
+    // -----------ConstenViewの引数---------------
+    
+    // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
+    //Bindingにすることでindexの値を保持する
+    @Binding var index: String
+    // TabViewの切り替えを検知するためのString変数
+    @State var selection:String
     
     var body: some View {
         NavigationView{
@@ -155,24 +163,22 @@ struct ContentView: View {
                 }// List ここまで
                 .listStyle(PlainListStyle())  // listの表示スタイルを指定
                 .edgesIgnoringSafeArea(.top)
+//                .navigationBarItems(trailing: Button.init(action: { self.editMode = self.editMode.isEditing ? .inactive : .active }, label: {
+//                                if self.editMode.isEditing {
+//                                    Image.init(systemName: "checkmark")
+//                                } else {
+//                                    Image.init(systemName: "square.and.pencil")
+//                                }
+//                            }))
+//                            .environment(\.editMode, self.$editMode)
                 .toolbar {
                     // 「編集」ボタン
                     ToolbarItem(placement: .navigationBarLeading) {
-                        // オリジナルEditButtonに置き換え
-                        Button(action: {
-                            withAnimation() {
-                                if editMode?.wrappedValue.isEditing == true {
-                                    editMode?.wrappedValue = .inactive
-                                } else {
-                                    editMode?.wrappedValue = .active
-                                }
-                            }
-                        }) {
-                            if editMode?.wrappedValue.isEditing == true {
-                                Text("完了")
-                            } else {
-                                Text("編集")
-                            }
+                        if(!isModalSubviewNew && !isModalSubview && selection == "alarm"){
+                            MyEditButton()
+                        } else {
+                            Text("編集")
+                                .foregroundColor(Color("DarkOrange"))
                         }
                     }
                     // 「＋」ボタン
@@ -180,10 +186,6 @@ struct ContentView: View {
                         Button(action: {
                             for item in items {
                                 setUuidArray.append(item.wrappedUuid)
-                            }
-                            // 「完了」ボタンが表示されている場合、「編集」ボタンへ戻す
-                            if editMode?.wrappedValue.isEditing == true {
-                                editMode?.wrappedValue = .inactive
                             }
                             
                             dataModel.isNewData.toggle()
@@ -300,7 +302,7 @@ func resetTime(date: Date) -> Date {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(index: Binding.constant("")).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView(index: Binding.constant(""),selection: "alarm").environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
 
@@ -312,30 +314,39 @@ struct ContentView_Previews: PreviewProvider {
 //}
 
 
-/*
+
  // オリジナルEditButton
- struct MyEditButton: View {
- @Environment(\.editMode) var editMode
- 
- 
- var body: some View {
- Button(action: {
- withAnimation() {
- if editMode?.wrappedValue.isEditing == true {
- editMode?.wrappedValue = .inactive
- } else {
- editMode?.wrappedValue = .active
- }
- }
- }) {
- if editMode?.wrappedValue.isEditing == true {
- Text("完了")
- } else {
- Text("編集")
- }
- }
- }
- 
+struct MyEditButton: View {
+    @Environment(\.editMode) private var editMode
+    
+    
+    var body: some View {
+        Button(action: {
+            withAnimation() {
+                if editMode?.wrappedValue.isEditing == true {
+                    editMode?.wrappedValue = .inactive
+                } else {
+                    editMode?.wrappedValue = .active
+                }
+            }
+        }) {
+            if editMode?.wrappedValue.isEditing == true {
+                Text("完了")
+            } else {
+                Text("編集")
+            }
+        }
+        .onDisappear{
+//            if editMode?.wrappedValue.isEditing == true {
+                editMode?.wrappedValue = .inactive
+//            }
+        }
+        .onAppear{
+//            editMode?.wrappedValue = .inactive
+        }
+    }
+}
+/*
  // アラーム設定画面へ移行した時、もし「完了」ボタンが表示されていたら「編集」ボタンへ戻す
  func changeEditMode() {
  if editMode?.wrappedValue.isEditing == false{

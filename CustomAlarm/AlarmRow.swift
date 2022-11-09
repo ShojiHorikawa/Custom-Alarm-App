@@ -38,6 +38,9 @@ struct AlarmRow: View {
     // AlarmRow Youtube起動用　一致確認Bool変数(toggleスイッチを手動で押してON → OFFにした時はtrueの状態)
 //    @Binding var rowToggleBool:Bool
     
+    // オリジナル編集・完了ボタン用変数
+    @Environment(\.editMode) var editMode
+    
     var body: some View {
         ZStack(alignment: .trailing) {
             HStack{
@@ -73,6 +76,10 @@ struct AlarmRow: View {
             
             // AlarmRow.swiftのcanvasではONとOFFを切り替えることができないので注意
             Toggle("",isOn: $Item.onOff)
+                // 編集ボタンを押した時に見えなくして、押しても反応しなくする　2022.11.9
+                .opacity(editMode?.wrappedValue.isEditing == true ? 0 : 1)
+                .disabled(editMode?.wrappedValue.isEditing == true)
+            
                 .onChange(of: Item.onOff){ OnOff in
                     if(OnOff){
                         // 一致確認用Bool変数をtrueへ

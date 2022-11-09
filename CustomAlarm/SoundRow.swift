@@ -36,7 +36,7 @@ struct SoundRow: View {
                 
                 // 半角12文字,全角6文字で区切る
                 Text(Item_S.wrappedSoundName_S != "" ? cutSoundName(text: Item_S.wrappedSoundName_S) : "サウンド\(String(format: "%02d", soundIndex + 1))")
-                    .font(.system(size: 50))
+                    .font(.system(size: 45))
                     .fontWeight(.light)
                 Spacer()
             }
