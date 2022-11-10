@@ -46,7 +46,7 @@ struct SoundRow: View {
                     .fontWeight(.light)
                     .brightness(Item_S.soundTimeOnOff_S ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
 //                Spacer()
-                // リスト削除指示待ち状態の時に、文字が折り返すことを防ぐために下の"  "を削る
+                // リスト削除指示待ち状態の時に、文字が折り返すことを防ぐために下の"  "を削る 2022.11.10
                 Text("\(editMode?.wrappedValue.isEditing == true ? "" : "  ")リピート \(RepeatBool ? "\(hourIntRe):\(String(format: "%02d", minIntRe)):\(String(format: "%02d", secIntRe))" : "OFF")")
                     .font(.headline)
                     .fontWeight(.light)
