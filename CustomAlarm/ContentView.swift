@@ -31,7 +31,7 @@ struct ContentView: View {
     @State var isModalSubview = false
     
     // オリジナル編集・完了ボタン用変数
-    @Environment(\.editMode) var editMode
+//    @Environment(\.editMode) var editMode
 //    @State var editMode: EditMode = .inactive
     
     
@@ -57,7 +57,8 @@ struct ContentView: View {
     //Bindingにすることでindexの値を保持する
     @Binding var index: String
     // TabViewの切り替えを検知するためのString変数
-    @State var selection:String
+//    @State var selection:String
+    @Binding var selection:Int
     
     var body: some View {
         NavigationView{
@@ -140,7 +141,6 @@ struct ContentView: View {
                         
                         // 既存のアラーム設定がある場合の設定ページを開く処理
                         if(items.count > 0 && items[searchIndex(uuid: index)].alarmTime != nil){
-//                                if(items.count > 0) {
                             SettingView(dataModel: dataModel)
                                 .onDisappear{
                                     print("Setting画面を閉じました")
@@ -163,18 +163,11 @@ struct ContentView: View {
                 }// List ここまで
                 .listStyle(PlainListStyle())  // listの表示スタイルを指定
                 .edgesIgnoringSafeArea(.top)
-//                .navigationBarItems(trailing: Button.init(action: { self.editMode = self.editMode.isEditing ? .inactive : .active }, label: {
-//                                if self.editMode.isEditing {
-//                                    Image.init(systemName: "checkmark")
-//                                } else {
-//                                    Image.init(systemName: "square.and.pencil")
-//                                }
-//                            }))
-//                            .environment(\.editMode, self.$editMode)
                 .toolbar {
                     // 「編集」ボタン
                     ToolbarItem(placement: .navigationBarLeading) {
-                        if(!isModalSubviewNew && !isModalSubview && selection == "alarm"){
+                        // モーダル遷移・TabView切り替えがされた時にMyEditButtonを消す(onDisapper処理を誘発)
+                        if(!isModalSubviewNew && !isModalSubview && selection == 1){
                             MyEditButton()
                         } else {
                             Text("編集")
@@ -212,19 +205,21 @@ struct ContentView: View {
                 } // toolbarここまで
             } // VStackここまで
             
+//            .navigationBarTitle("\(selection)")
             .navigationBarTitle("アラーム")
         } // NavigationViewここまで
         .onChange(of: scenePhase) { phase in
             if phase == .inactive {
                 for item in items{
+/*
                     if(item.onOff){
-/* UserDefaultsでAlarmRowのtoggleスイッチやアラーム設定の変更・新規作成をした時間〜NowTimeの間のアラーム設定をOFFに変える
+ UserDefaultsでAlarmRowのtoggleスイッチやアラーム設定の変更・新規作成をした時間〜NowTimeの間のアラーム設定をOFFに変える
                         // アラームの設定をOFFにする
                         if(item.wrappedAlarmTime.timeIntervalSinceNow < 0 && item.dayOfWeekRepeat == []){
                             item.onOff = false
                         }
-*/
                     }
+ */
                     // ↓の処理を入れるためにわざとifを分断
                     // アラームの設定 年月日を更新
                     item.alarmTime = updateTime(didAlarmTime: item.wrappedAlarmTime)
@@ -302,7 +297,7 @@ func resetTime(date: Date) -> Date {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(index: Binding.constant(""),selection: "alarm").environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView(index: Binding.constant(""),selection:Binding.constant(1)).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
 
@@ -341,17 +336,5 @@ struct MyEditButton: View {
                 editMode?.wrappedValue = .inactive
 //            }
         }
-        .onAppear{
-//            editMode?.wrappedValue = .inactive
-        }
     }
 }
-/*
- // アラーム設定画面へ移行した時、もし「完了」ボタンが表示されていたら「編集」ボタンへ戻す
- func changeEditMode() {
- if editMode?.wrappedValue.isEditing == false{
- editMode?.wrappedValue = .active
- }
- }
- }
- */

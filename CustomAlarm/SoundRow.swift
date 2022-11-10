@@ -8,11 +8,6 @@
 import SwiftUI
 
 struct SoundRow: View {
-//    @State var soundName_S: String
-//    @State var soundTimeOnOff_S: Bool
-//    @State var soundTime_S: Int
-//    @State var soundRepeatTime_S: Int
-//    Previewを使うために今はコメントアウト
     @ObservedObject var Item_S: SoundData
     
     // 名称のないサウンド設定に番号を割り振る変数
@@ -30,6 +25,9 @@ struct SoundRow: View {
     @State var minIntRe = 0
     @State var secIntRe = 0
     
+    // オリジナル編集・完了ボタン用変数
+    // .action中に２段目の文字列が折り返さないようにする
+    @Environment(\.editMode) var editMode
     var body: some View {
         VStack{
             HStack{
@@ -48,7 +46,8 @@ struct SoundRow: View {
                     .fontWeight(.light)
                     .brightness(Item_S.soundTimeOnOff_S ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更
 //                Spacer()
-                Text("  リピート \(RepeatBool ? "\(hourIntRe):\(String(format: "%02d", minIntRe)):\(String(format: "%02d", secIntRe))" : "OFF")")
+                // リスト削除指示待ち状態の時に、文字が折り返すことを防ぐために下の"  "を削る
+                Text("\(editMode?.wrappedValue.isEditing == true ? "" : "  ")リピート \(RepeatBool ? "\(hourIntRe):\(String(format: "%02d", minIntRe)):\(String(format: "%02d", secIntRe))" : "OFF")")
                     .font(.headline)
                     .fontWeight(.light)
                     .brightness(RepeatBool ? 0.0 : -0.5) // valueの真偽で文字の明るさを変更

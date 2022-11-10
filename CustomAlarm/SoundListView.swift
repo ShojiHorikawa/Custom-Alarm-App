@@ -28,10 +28,15 @@ struct SoundListView: View {
     // オリジナル編集・完了ボタン用変数
 //    @Environment(\.editMode) var editMode
     
+    // -----------ConstenViewの引数---------------
     
     // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
     //Bindingにすることでindexの値を保持する
     @Binding var index_S: String
+    // TabViewの切り替えを検知するためのString変数
+//    @State var selection:String
+    @Binding var selection:Int
+    
     var body: some View {
         NavigationView{
             VStack{
@@ -54,7 +59,6 @@ struct SoundListView: View {
                     .sheet(isPresented: self.$isModalSubview_S) {
                         // 既存のアラーム設定がある場合の設定ページを開く処理
                         if(items_S.count > 0 && items_S[searchIndex(uuid_S: index_S)].createdTime_S != nil){
-//                                if(items.count > 0) {
                             SoundCreatView(soundDataModel: soundDataModel)
                                 .onDisappear{
                                     print("SoundCreat画面を閉じました")
@@ -64,7 +68,7 @@ struct SoundListView: View {
                                         soundDataModel.isNewData_S.toggle()
                                     }
                                 } // onDisapperここまで
-                        }
+                        } // sheet if ここまで
                     } // sheetここまで
                 } // Listここまで
                 .listStyle(PlainListStyle())  // listの表示スタイルを指定
@@ -72,32 +76,18 @@ struct SoundListView: View {
                 .toolbar {
                     // 「編集」ボタン
                     ToolbarItem(placement: .navigationBarLeading) {
-                        // ContentView.swift内に書いたstructを使う
-//                        MyEditButton()
-                        // オリジナルEditButtonに置き換え
-//                        Button(action: {
-//                            withAnimation() {
-//                                if editMode?.wrappedValue.isEditing == true {
-//                                    editMode?.wrappedValue = .inactive
-//                                } else {
-//                                    editMode?.wrappedValue = .active
-//                                }
-//                            }
-//                        }) {
-//                            if editMode?.wrappedValue.isEditing == true {
-//                                Text("完了")
-//                            } else {
-//                                Text("編集")
-//                            }
-//                        }
+                        // モーダル遷移・TabView切り替えがされた時にMyEditButtonを消す(onDisapper処理を誘発)
+                        if(!isModalSubview_S && !isModalSubviewNew_S && selection == 2){
+                            // ContentView.swift内に書いたstructを使う
+                            MyEditButton()
+                        } else {
+                            Text("編集")
+//                                .foregroundColor(Color("DarkOrange"))
+                        }
                     }
                     // 「＋」ボタン
                     ToolbarItem {
                         Button(action: {
-                            // 「完了」ボタンが表示されている場合、「編集」ボタンへ戻す
-//                            if editMode?.wrappedValue.isEditing == true {
-//                                editMode?.wrappedValue = .inactive
-//                            }
                             
                             soundDataModel.isNewData_S.toggle()
                             self.isModalSubviewNew_S.toggle()
@@ -110,6 +100,7 @@ struct SoundListView: View {
                     } // ToolbarItemここまで
                 } // toolbarここまで
             }
+//            .navigationBarTitle("\(selection)")
             .navigationBarTitle("サウンドリスト")
         } // NavigationView ここまで
     } // body ここまで
@@ -150,6 +141,6 @@ struct SoundListView: View {
 
 struct SoundListView_Previews: PreviewProvider {
     static var previews: some View {
-        SoundListView(index_S: Binding.constant("")).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        SoundListView(index_S: Binding.constant(""),selection:Binding.constant(2)).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

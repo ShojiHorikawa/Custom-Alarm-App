@@ -46,8 +46,56 @@
             filePath = "CustomAlarm/ContentView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "339"
-            endingLineNumber = "339"
+            startingLineNumber = "334"
+            endingLineNumber = "334"
+            landmarkName = "body"
+            landmarkType = "24">
+            <Locations>
+               <Location
+                  uuid = "BCFD8B6D-905B-498D-9536-051766CF14F7 - aa6e2538cb392e74"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CustomAlarm.MyEditButton.body.getter : some"
+                  moduleName = "CustomAlarm"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/horikawashoji/Desktop/Xcode%20file/CustomAlarm/CustomAlarm/ContentView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "342"
+                  endingLineNumber = "342"
+                  offsetFromSymbolStart = "940">
+               </Location>
+               <Location
+                  uuid = "BCFD8B6D-905B-498D-9536-051766CF14F7 - 3a996c4ee54d913c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 () -&gt; () in CustomAlarm.MyEditButton.body.getter : some"
+                  moduleName = "CustomAlarm"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/horikawashoji/Desktop/Xcode%20file/CustomAlarm/CustomAlarm/ContentView.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "344"
+                  endingLineNumber = "344"
+                  offsetFromSymbolStart = "376">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7DE67CF3-A7E5-4F3D-990A-CE4B504F40B1"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CustomAlarm/MainView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
             landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>

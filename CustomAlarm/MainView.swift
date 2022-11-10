@@ -12,7 +12,8 @@ struct MainView: View {
     // SettingView遷移のために押されたButtonの番号と引数に渡すデータの番号を一致させるための変数
     @State var index = ""
     @State var index_S = ""
-    @State private var selection = "alarm"
+//    @State private var selection = "alarm"
+    @State private var selection = 1
     init() {
         UITabBar.appearance().backgroundColor = .black.withAlphaComponent(0.5)
         }
@@ -20,8 +21,8 @@ struct MainView: View {
     @Environment(\.editMode) var editMode
     var body: some View {
             TabView(selection: $selection){
-                ContentView(index: $index,selection: selection)
-                    .tag("alarm")
+                ContentView(index: $index,selection: $selection)
+                    .tag(1)
                     .tabItem{
                             Image(systemName: "alarm.fill")
                                 .foregroundColor(Color("DarkOrange"))
@@ -30,8 +31,8 @@ struct MainView: View {
                                 .font(.caption)
                                 .fontWeight(.black)
                     }
-                SoundListView(index_S: $index_S)
-                    .tag("sound")
+                SoundListView(index_S: $index_S,selection: $selection)
+                    .tag(2)
                     .tabItem{
                             Image(systemName: "headphones")
                                 .foregroundColor(Color("DarkOrange"))
@@ -41,11 +42,6 @@ struct MainView: View {
                                 .fontWeight(.black)
                     }
             } // TabViewここまで
-//            .onChange(of: selection){ _ in
-//                if editMode?.wrappedValue.isEditing == true {
-//                    editMode?.wrappedValue = .inactive
-//                }
-//            }
     }
 }
 
